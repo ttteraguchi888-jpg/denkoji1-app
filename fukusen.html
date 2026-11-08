@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#050505">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>複線図 METAL 道場 ｜ 第一種電気工事士 技能試験</title>
+  <link rel="stylesheet" href="fukusen/app.css">
+</head>
+<body>
+  <header class="hd">
+    <a class="hd-back" href="index.html" title="ホームへ">◀ HOME</a>
+    <div class="hd-title">
+      <span class="hd-fox">⚡</span>
+      <h1>複線図 <span class="metal">METAL</span> 道場</h1>
+      <span class="hd-sub">第一種電気工事士 技能試験 令和8年度 候補問題 No.1〜No.10</span>
+    </div>
+    <button id="btn-qr" class="hd-qr" type="button" title="スマホでQRコードを読んで接続・連動">
+      <span id="sync-dot" class="sync-dot"></span>
+      📱 スマホ接続(QR)
+    </button>
+  </header>
+
+  <!-- 問題選択ナビ -->
+  <nav class="nav" id="nav"></nav>
+
+  <main id="main">
+    <!-- 基本ルールページ -->
+    <section id="page-basic" class="page"></section>
+
+    <!-- 問題ページ -->
+    <section id="page-prob" class="page hidden">
+      <div class="prob-head">
+        <div>
+          <h2 id="p-title"></h2>
+          <p id="p-sub" class="dim"></p>
+          <p id="p-power" class="power"></p>
+        </div>
+        <div class="mastery" id="p-mastery"></div>
+      </div>
+
+      <div class="layout">
+        <!-- 左：単線図・資料 -->
+        <aside class="side">
+          <div class="card">
+            <h3>単線図（候補問題）</h3>
+            <img id="p-tansen" class="zoomable tansen" alt="単線図">
+          </div>
+          <div class="card">
+            <h3>公式資料を見る</h3>
+            <div class="doc-btns" id="p-docs"></div>
+          </div>
+          <div class="card">
+            <h3>施工条件の要点</h3>
+            <ul id="p-cond" class="list"></ul>
+          </div>
+        </aside>
+
+        <!-- 右：複線図ステップ -->
+        <div class="stage">
+          <div class="steps" id="stepbar"></div>
+
+          <div class="controls">
+            <button id="btn-prev" class="btn">◀ 前へ</button>
+            <button id="btn-next" class="btn btn-red">次へ ▶</button>
+            <button id="btn-play" class="btn">▶▶ 自動再生</button>
+            <button id="btn-replay" class="btn">↻ もう一度描く</button>
+            <label class="chk"><input type="checkbox" id="chk-hl" checked> 現在の手順を光らせる</label>
+            <label class="chk"><input type="checkbox" id="chk-cmp"> 公式複線図と並べる</label>
+          </div>
+
+          <div class="canvas-wrap" id="canvas-wrap">
+            <div class="canvas-box"><svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+            <div class="canvas-box official hidden" id="official-box">
+              <div class="official-cap">公式 解答 複線図</div>
+              <img id="official-img" class="zoomable" alt="公式複線図">
+            </div>
+          </div>
+
+          <div class="explain card">
+            <h3 id="ex-title"></h3>
+            <ul id="ex-list" class="list"></ul>
+            <div id="ex-tally"></div>
+            <div class="selfcheck">
+              <label class="chk big"><input type="checkbox" id="chk-self"> このステップを <b>何も見ずに紙に描けた</b></label>
+            </div>
+          </div>
+
+          <div class="card legend" id="legend"></div>
+
+          <div class="card">
+            <h3>🔥 合格ポイント（欠陥にしない！）</h3>
+            <ul id="p-points" class="list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- スマホ用の下部固定ワンタッチ操作バー -->
+  <div id="mob-bar" class="mob-bar hidden">
+    <button id="mob-prev" class="btn" type="button">◀ 前へ</button>
+    <div id="mob-step" class="mob-step">STEP 1 / 5</div>
+    <button id="mob-next" class="btn btn-red" type="button">次へ ▶</button>
+  </div>
+
+  <!-- スマホQRコードかんたん接続モーダル -->
+  <div id="qr-modal" class="modal hidden">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <h3>📱 スマホかんたん接続 ＆ リアルタイム連動</h3>
+        <button id="qr-close" class="btn-close" type="button">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="qr-box" id="qr-svg-box"></div>
+        <div class="qr-info">
+          <div class="sync-status-line" id="sync-status-text">🔄 連動サーバー確認中...</div>
+          <p class="qr-url-label">スマホのカメラで上のQRコードを読み取るか、下記URLを開いてください：</p>
+          <div class="qr-url-row">
+            <input id="qr-url-input" type="text" class="qr-url-input" value="https://ttteraguchi888-jpg.github.io/denkoji1-app/fukusen.html">
+            <button id="btn-copy-url" class="btn btn-red" type="button">コピー</button>
+          </div>
+          <label class="chk big" style="margin-top:10px">
+            <input type="checkbox" id="chk-remote" checked>
+            <b>リモコン連動モード</b>（スマホで問題・ステップを動かすとPC画面も連動）
+          </label>
+          <ol class="qr-guide">
+            <li>パソコンとスマホを <b>同じWi-Fi</b> に接続します。</li>
+            <li>フォルダ内の <b>「スマホ連動スタート.bat」</b> を起動します（起動中ならそのままOK）。</li>
+            <li>スマホの標準カメラをQRコードにかざすだけで即接続！習得度も自動同期されます。</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 拡大表示 -->
+  <div id="lightbox" class="lightbox hidden"><img id="lb-img" alt=""><span class="lb-close">✕ 閉じる</span></div>
+
+  <footer class="ft">© 2026 複線図 METAL 道場 ― 鋼の意志で一発合格 🦊🤘</footer>
+
+  <script src="fukusen/qr.js"></script>
+  <script src="fukusen/render.js"></script>
+  <script src="fukusen/data/no1.js"></script>
+  <script src="fukusen/data/no2.js"></script>
+  <script src="fukusen/data/no3.js"></script>
+  <script src="fukusen/data/no4.js"></script>
+  <script src="fukusen/data/no5.js"></script>
+  <script src="fukusen/data/no6.js"></script>
+  <script src="fukusen/data/no7.js"></script>
+  <script src="fukusen/data/no8.js"></script>
+  <script src="fukusen/data/no9.js"></script>
+  <script src="fukusen/data/no10.js"></script>
+  <script src="fukusen/basic.js"></script>
+  <script src="fukusen/app.js"></script>
+</body>
+</html>

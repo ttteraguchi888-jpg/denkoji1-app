@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勉強時間タイマー - 第一種電気工事士 Bear Sync</title>
+    <style>
+        :root {
+            --primary-blue: #00d4ff;
+            --deep-blue: #0044cc;
+            --dark-bg: #000814;
+            --surface: #001233;
+            --surface2: #0a1628;
+            --accent-cyan: #00ffcc;
+            --accent-purple: #7b2fff;
+            --text: #e0f4ff;
+            --text-dim: #8ab4d4;
+            --border: #003366;
+            --break-color: #ff9933;
+            --exp-color: #ff00ff; /* エクスポージャー用の光る色 */
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--surface);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .bear-logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--primary-blue);
+            text-shadow: 0 0 5px var(--primary-blue);
+        }
+
+        .btn-home {
+            margin-left: auto;
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-home:hover {
+            background-color: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 8px var(--primary-blue);
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .timer-card {
+            text-align: center;
+            position: relative;
+        }
+
+        /* デジタル時計風フォントの代替（標準フォントで太く） */
+        .timer-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 5.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            text-shadow: 0 0 20px var(--primary-blue), 0 0 40px var(--primary-blue);
+            margin: 20px 0;
+            transition: color 0.3s, text-shadow 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .timer-display.break-mode {
+            color: var(--break-color);
+            text-shadow: 0 0 20px var(--break-color), 0 0 40px var(--break-color);
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-start { border-color: var(--primary-blue); color: var(--primary-blue); }
+        .btn-start:hover { background-color: rgba(0, 212, 255, 0.1); box-shadow: 0 0 15px var(--primary-blue); }
+        
+        .btn-pause { border-color: #ffcc00; color: #ffcc00; }
+        .btn-pause:hover { background-color: rgba(255, 204, 0, 0.1); box-shadow: 0 0 15px #ffcc00;}
+        
+        .btn-reset { border-color: #ff4444; color: #ff4444; }
+        .btn-reset:hover { background-color: rgba(255, 68, 68, 0.1); box-shadow: 0 0 15px #ff4444;}
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label { display: block; margin-bottom: 5px; color: var(--text-dim); }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 8px var(--primary-blue);
+        }
+
+        .bear-status {
+            margin-top: 20px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* エクスポージャー（累積）エリア */
+        .exposure-box {
+            background: linear-gradient(135deg, rgba(10,22,40,1) 0%, rgba(123,47,255,0.15) 100%);
+            border: 1px solid var(--accent-purple);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(123,47,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .exposure-box::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,0,255,0.1) 0%, transparent 70%);
+            animation: rotateGlow 10s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .exposure-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .exposure-title {
+            color: var(--accent-purple);
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 0 0 5px var(--accent-purple);
+        }
+        .exposure-time {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px var(--exp-color), 0 0 20px var(--exp-color);
+            margin-bottom: 10px;
+        }
+        .exposure-level {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .exp-bar-container {
+            width: 100%;
+            height: 12px;
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+        }
+        .exp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--exp-color));
+            width: 0%;
+            transition: width 1s ease-out;
+            box-shadow: 0 0 10px var(--exp-color);
+        }
+
+        /* 統計エリア */
+        .stats-card h3 {
+            margin-top: 0;
+            color: var(--primary-blue);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--surface2);
+            font-size: 0.95rem;
+        }
+
+        /* 週間グラフ (CSS Bar Chart) */
+        .chart-container {
+            margin-top: 20px;
+            height: 150px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+        }
+
+        .bar {
+            width: 80%;
+            background-color: var(--primary-blue);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+        }
+        .bar:hover {
+            background-color: var(--accent-cyan);
+            box-shadow: 0 0 12px var(--accent-cyan);
+        }
+
+        .bar-label {
+            margin-top: 5px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .target-line {
+            position: absolute;
+            width: 100%;
+            border-top: 2px dashed var(--accent-cyan);
+            bottom: 80px; /* 目標120分想定 */
+            left: 0;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .target-label {
+            position: absolute;
+            left: 5px;
+            bottom: 82px;
+            font-size: 0.7rem;
+            color: var(--accent-cyan);
+        }
+        
+        /* 音声設定トグル */
+        .voice-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            gap: 10px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--surface2);
+            border: 1px solid var(--border);
+            transition: .4s;
+            border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--text-dim);
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 8px var(--primary-blue);
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+            background-color: var(--dark-bg);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <svg viewBox="0 0 100 100" class="bear-logo">
+            <circle cx="50" cy="55" r="35" fill="none" stroke="var(--primary-blue)" stroke-width="3"/>
+            <circle cx="22" cy="27" r="12" fill="none" stroke="var(--primary-blue)" stroke-width="3"/>
+            <circle cx="78" cy="27" r="12" fill="none" stroke="var(--primary-blue)" stroke-width="3"/>
+            <circle cx="37" cy="50" r="4" fill="var(--accent-cyan)"/>
+            <circle cx="63" cy="50" r="4" fill="var(--accent-cyan)"/>
+            <path d="M 44 70 Q 50 75 56 70" fill="none" stroke="var(--primary-blue)" stroke-width="2"/>
+        </svg>
+        <h1>勉強時間タイマー</h1>
+        <a href="index.html" class="btn-home">ホームへ戻る</a>
+    </header>
+
+    <div class="container">
+        <!-- タイマー -->
+        <div class="card timer-card">
+            <h2 id="modeLabel" style="color: var(--primary-blue); margin:0; font-size:1.4rem;">ポモドーロ (25分学習)</h2>
+            
+            <div class="timer-display" id="timerDisplay">25:00</div>
+            
+            <div class="timer-controls">
+                <button class="btn btn-start" id="btnStart">開始</button>
+                <button class="btn btn-pause" id="btnPause">一時停止</button>
+                <button class="btn btn-reset" id="btnReset">リセット</button>
+            </div>
+
+            <div class="form-group">
+                <label>現在の学習科目</label>
+                <select id="subjectSelect" class="form-control">
+                    <option value="電気に関する基礎理論">1. 電気に関する基礎理論</option>
+                    <option value="配電理論及び配線設計">2. 配電理論及び配線設計</option>
+                    <option value="電気応用">3. 電気応用</option>
+                    <option value="電気機器など">4. 電気機器・配線器具など</option>
+                    <option value="電気工事の施工方法">5. 電気工事の施工方法</option>
+                    <option value="検査方法">6. 自家用電気工作物の検査方法</option>
+                    <option value="配線図">7. 配線図</option>
+                    <option value="発電・送電など">8. 発電施設・送電施設など</option>
+                    <option value="保安">9. 保安</option>
+                </select>
+            </div>
+
+            <div class="bear-status" id="bearStatus">
+                <!-- クマのアニメーションSVG -->
+            </div>
+            <div id="bearMessage" style="color: var(--accent-cyan); font-weight: bold; margin-top: 10px; font-size:1.1rem;">
+                さあ、学習を始めるクマ！
+            </div>
+            
+            <div class="voice-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="voiceToggle" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>音声アシスト (レッツゴー / お疲れ様)</span>
+            </div>
+        </div>
+
+        <!-- 統計＆エクスポージャー -->
+        <div class="card stats-card">
+            
+            <!-- エクスポージャー（累積）エリア -->
+            <div class="exposure-box">
+                <div class="exposure-content">
+                    <div class="exposure-title">✨ 累計エクスポージャー (総学習時間) ✨</div>
+                    <div class="exposure-time" id="expTotalTime">0時間 0分</div>
+                    <div class="exposure-level" id="expLevel">Lv.1 見習いクマ</div>
+                    <div class="exp-bar-container" title="次のレベルまで">
+                        <div class="exp-bar-fill" id="expBarFill"></div>
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-dim); margin-top:5px; text-align:right;" id="expNext">次のレベルまで: 0分</div>
+                </div>
+            </div>
+
+            <h3>今日の記録</h3>
+            <div class="stat-row">
+                <span>合計学習時間</span>
+                <strong id="todayTotal" style="color: var(--accent-cyan); font-size: 1.2rem;">0 分</strong>
+            </div>
+            <div class="stat-row">
+                <span>朝 (5:00-12:00)</span>
+                <span id="morningTotal">0 分</span>
+            </div>
+            <div class="stat-row">
+                <span>昼 (12:00-18:00)</span>
+                <span id="afternoonTotal">0 分</span>
+            </div>
+            <div class="stat-row">
+                <span>夜 (18:00-5:00)</span>
+                <span id="nightTotal">0 分</span>
+            </div>
+
+            <h3 style="margin-top: 25px;">過去7日間の学習時間</h3>
+            <div class="chart-container" id="weeklyChart">
+                <div class="target-line"></div>
+                <div class="target-label">目標: 120分</div>
+                <!-- JSでバーを追加 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const LOG_KEY = 'denkoji1_study_sessions';
+        
+        let timerInterval;
+        let expectedEndTime = 0;
+        let timeLeft = 25 * 60; // 秒
+        let isRunning = false;
+        let isBreak = false; // true = 休憩
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        const modeLabel = document.getElementById('modeLabel');
+        const bearStatus = document.getElementById('bearStatus');
+        const bearMessage = document.getElementById('bearMessage');
+
+        // 音声合成の初期化
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices(); // キャッシュ読み込み
+            };
+        }
+
+        function playVoice(type) {
+            const voiceToggle = document.getElementById('voiceToggle');
+            if (!voiceToggle.checked) return; // オフなら鳴らさない
+            if (!('speechSynthesis' in window)) return;
+            
+            window.speechSynthesis.cancel(); // 既存の音声をキャンセル
+            
+            const msg = new SpeechSynthesisUtterance();
+            msg.lang = 'ja-JP';
+            
+            const voices = window.speechSynthesis.getVoices();
+            const jaVoices = voices.filter(v => v.lang.includes('ja'));
+            
+            if (type === 'start') {
+                // クマの声 (低音、力強い)
+                msg.text = 'レッツゴーだクマ！';
+                msg.pitch = 0.1; // 低め
+                msg.rate = 0.85; // 少しゆっくり
+                msg.volume = 1.0;
+                
+                // 男性や太い声のボイスがあれば優先
+                const maleVoice = jaVoices.find(v => v.name.includes('Male') || v.name.includes('Ichiro') || v.name.includes('Keita') || v.name.includes('男性'));
+                if (maleVoice) msg.voice = maleVoice;
+                
+            } else if (type === 'end') {
+                // 女性の声 (高音、癒やし)
+                msg.text = 'お疲れ様でした。ゆっくり休んでくださいね。';
+                msg.pitch = 1.4; // 高め
+                msg.rate = 0.9;
+                msg.volume = 1.0;
+                
+                // 女性ボイスを優先
+                const femaleVoice = jaVoices.find(v => v.name.includes('Female') || v.name.includes('Haruka') || v.name.includes('Nanami') || v.name.includes('Mei') || v.name.includes('Ayumi') || v.name.includes('女性'));
+                if (femaleVoice) msg.voice = femaleVoice;
+            }
+            
+            window.speechSynthesis.speak(msg);
+        }
+
+        // クマSVG
+        const bearStudySVG = `
+            <svg viewBox="0 0 100 100" style="height: 100%;">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--primary-blue)" stroke-width="2"/>
+                <!-- 目が炎のように燃える -->
+                <path d="M 30 40 L 40 40 M 35 35 L 35 45" stroke="var(--accent-cyan)" stroke-width="2"/>
+                <path d="M 60 40 L 70 40 M 65 35 L 65 45" stroke="var(--accent-cyan)" stroke-width="2"/>
+                <path d="M 45 65 Q 50 60 55 65" fill="none" stroke="var(--primary-blue)" stroke-width="2"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--primary-blue)" stroke-width="1" stroke-dasharray="4 4">
+                    <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="10s" repeatCount="indefinite" />
+                </circle>
+            </svg>
+        `;
+        const bearBreakSVG = `
+            <svg viewBox="0 0 100 100" style="height: 100%;">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--break-color)" stroke-width="2"/>
+                <!-- 眠そうな目 -->
+                <path d="M 30 40 Q 35 45 40 40" fill="none" stroke="var(--break-color)" stroke-width="2"/>
+                <path d="M 60 40 Q 65 45 70 40" fill="none" stroke="var(--break-color)" stroke-width="2"/>
+                <!-- リラックスした口 -->
+                <path d="M 45 65 Q 50 70 55 65" fill="none" stroke="var(--break-color)" stroke-width="2"/>
+                <!-- Zzzアニメーション -->
+                <text x="70" y="30" fill="var(--break-color)" font-size="12" font-weight="bold">
+                    Z
+                    <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="y" values="30;15" dur="2s" repeatCount="indefinite"/>
+                </text>
+            </svg>
+        `;
+
+        function updateDisplay() {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            if(m < 0) m = 0;
+            if(s < 0) s = 0;
+            timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function setMode(breakMode) {
+            isBreak = breakMode;
+            if (isBreak) {
+                timeLeft = 5 * 60; // 5分休憩
+                modeLabel.textContent = '休憩 (5分)';
+                modeLabel.style.color = 'var(--break-color)';
+                timerDisplay.classList.add('break-mode');
+                bearStatus.innerHTML = bearBreakSVG;
+                bearMessage.textContent = 'お疲れ様！少し休むクマ〜';
+                bearMessage.style.color = 'var(--break-color)';
+            } else {
+                timeLeft = 25 * 60; // 25分学習
+                modeLabel.textContent = 'ポモドーロ (25分学習)';
+                modeLabel.style.color = 'var(--primary-blue)';
+                timerDisplay.classList.remove('break-mode');
+                bearStatus.innerHTML = bearStudySVG;
+                bearMessage.textContent = 'さあ、学習を始めるクマ！';
+                bearMessage.style.color = 'var(--accent-cyan)';
+            }
+            updateDisplay();
+        }
+
+        function getTimeOfDay() {
+            const h = new Date().getHours();
+            if (h >= 5 && h < 12) return '朝';
+            if (h >= 12 && h < 18) return '昼';
+            return '夜';
+        }
+
+        function saveSession() {
+            const dataStr = localStorage.getItem(LOG_KEY);
+            const data = dataStr ? JSON.parse(dataStr) : [];
+            
+            const today = new Date().toISOString().split('T')[0];
+            const subject = document.getElementById('subjectSelect').value;
+
+            data.push({
+                date: today,
+                subject: subject,
+                duration: 25, // 完了した分数 (ポモドーロ1回分)
+                timeOfDay: getTimeOfDay(),
+                timestamp: Date.now()
+            });
+
+            localStorage.setItem(LOG_KEY, JSON.stringify(data));
+            renderStats();
+        }
+
+        function tick() {
+            if (!isRunning) return;
+            const now = Date.now();
+            timeLeft = Math.round((expectedEndTime - now) / 1000);
+            
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                updateDisplay();
+                handleTimerComplete();
+            } else {
+                updateDisplay();
+            }
+        }
+
+        function handleTimerComplete() {
+            isRunning = false;
+            clearInterval(timerInterval);
+
+            if (!isBreak) {
+                // 学習完了
+                saveSession(); // 実績保存
+                playVoice('end'); // お疲れ様ボイス
+                alert('学習セッション完了！5分の休憩に入ります。');
+                setMode(true); // 休憩へ
+            } else {
+                // 休憩完了
+                // 休憩完了時は特別な声を出さないか、開始声に任せる
+                alert('休憩完了！次の学習を始めましょう。');
+                setMode(false); // 学習へ
+            }
+        }
+
+        document.getElementById('btnStart').addEventListener('click', () => {
+            if (isRunning) return;
+            isRunning = true;
+            expectedEndTime = Date.now() + timeLeft * 1000;
+            
+            timerInterval = setInterval(tick, 200); // 頻繁にチェックして正確にカウントダウン
+            
+            if (!isBreak) {
+                playVoice('start'); // レッツゴーだクマ！
+                bearMessage.textContent = '集中力が爆発してるクマ！🔥';
+            } else {
+                bearMessage.textContent = 'Zzz... 休んでるクマ...';
+            }
+        });
+
+        document.getElementById('btnPause').addEventListener('click', () => {
+            isRunning = false;
+            clearInterval(timerInterval);
+            // timeLeft は tick() によって更新済み
+            
+            // 停止したタイミングで新しい終了時間を計算できるように再計算用に残す
+            bearMessage.textContent = '一時停止中クマ。';
+        });
+
+        document.getElementById('btnReset').addEventListener('click', () => {
+            isRunning = false;
+            clearInterval(timerInterval);
+            setMode(isBreak); // 現在のモードの初期値にリセット
+        });
+
+        // --- 統計＆エクスポージャー描画 ---
+        function renderStats() {
+            const dataStr = localStorage.getItem(LOG_KEY);
+            const data = dataStr ? JSON.parse(dataStr) : [];
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            let todayTotal = 0, mTotal = 0, aTotal = 0, nTotal = 0;
+            let allTimeTotalMins = 0;
+
+            data.forEach(s => {
+                allTimeTotalMins += (s.duration || 0); // 累計加算
+                if (s.date === todayStr) {
+                    todayTotal += s.duration;
+                    if (s.timeOfDay === '朝') mTotal += s.duration;
+                    else if (s.timeOfDay === '昼') aTotal += s.duration;
+                    else nTotal += s.duration;
+                }
+            });
+
+            // エクスポージャー処理 (1レベル = 120分 = 2時間とする)
+            const MINS_PER_LEVEL = 120;
+            let totalHours = Math.floor(allTimeTotalMins / 60);
+            let remMins = allTimeTotalMins % 60;
+            
+            let level = Math.floor(allTimeTotalMins / MINS_PER_LEVEL) + 1;
+            let expInCurrentLevel = allTimeTotalMins % MINS_PER_LEVEL;
+            let progressPct = (expInCurrentLevel / MINS_PER_LEVEL) * 100;
+            let nextMins = MINS_PER_LEVEL - expInCurrentLevel;
+
+            // 称号
+            let title = "見習いクマ";
+            if(level >= 5) title = "配線職人クマ";
+            if(level >= 10) title = "ベテラン電気クマ";
+            if(level >= 25) title = "電気マスタークマ";
+            if(level >= 50) title = "雷神クマ";
+
+            document.getElementById('expTotalTime').textContent = `${totalHours}時間 ${remMins}分`;
+            document.getElementById('expLevel').textContent = `Lv.${level} ${title}`;
+            
+            // アニメーション用に少し遅延して幅を設定
+            setTimeout(() => {
+                document.getElementById('expBarFill').style.width = `${progressPct}%`;
+            }, 300);
+            document.getElementById('expNext').textContent = `次のレベルまで: あと ${nextMins}分`;
+
+            // 今日の記録
+            document.getElementById('todayTotal').textContent = `${todayTotal} 分`;
+            document.getElementById('morningTotal').textContent = `${mTotal} 分`;
+            document.getElementById('afternoonTotal').textContent = `${aTotal} 分`;
+            document.getElementById('nightTotal').textContent = `${nTotal} 分`;
+
+            // 週間グラフ作成
+            renderWeeklyChart(data);
+        }
+
+        function renderWeeklyChart(data) {
+            const chart = document.getElementById('weeklyChart');
+            // line などを残してバー部分をクリア
+            chart.querySelectorAll('.bar-wrapper').forEach(e => e.remove());
+
+            const today = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                const dayLabel = `${d.getMonth()+1}/${d.getDate()}`;
+
+                // その日の合計
+                const dayTotal = data.filter(s => s.date === dateStr).reduce((acc, cur) => acc + cur.duration, 0);
+                
+                // Max150分を100%として高さ計算 (超えたら100%)
+                const heightPercent = Math.min((dayTotal / 150) * 100, 100);
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bar-wrapper';
+                wrapper.innerHTML = `
+                    <div class="bar" style="height: ${heightPercent}%" title="${dayTotal}分"></div>
+                    <div class="bar-label">${dayLabel}</div>
+                `;
+                chart.appendChild(wrapper);
+            }
+        }
+
+        // 初期化
+        setMode(false);
+        renderStats();
+    </script>
+</body>
+</html>

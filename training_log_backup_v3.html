@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習記録 v3 - 第一種電気工事士 Bear Sync</title>
+<style>
+:root{
+  --pb:#00d4ff; --db:#0044cc; --bg:#000814;
+  --sf:#001233; --s2:#0a1628;
+  --cy:#00ffcc; --ye:#ffdd00;
+  --tx:#e0f4ff; --td:#8ab4d4; --br:#003366;
+  /* BABYMETAL風の黒と赤 */
+  --bm-black:#0d0d0d;
+  --bm-red:#e60012;
+  --bm-red-dark:#330006;
+  --bm-red-glow:rgba(230,0,18,0.6);
+  --bm-gold:#d4af37;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{background:var(--bg);color:var(--tx);font-family:"Segoe UI","Meiryo",sans-serif;font-size:15px;}
+header{background:var(--sf);padding:10px 20px;display:flex;align-items:center;border-bottom:2px solid var(--pb);box-shadow:0 0 10px rgba(0,212,255,.3);}
+.bear{width:48px;height:48px;margin-right:14px;}
+header h1{font-size:1.4rem;text-shadow:0 0 5px var(--pb);}
+.hlink{margin-left:auto;background:transparent;color:var(--pb);border:1px solid var(--pb);padding:5px 14px;border-radius:4px;text-decoration:none;font-size:.88rem;}
+.wrap{max-width:1040px;margin:20px auto;padding:0 16px;}
+/* タブ */
+.tabs{display:flex;border-bottom:2px solid var(--br);margin-bottom:0;}
+.tab{padding:9px 24px;cursor:pointer;background:var(--s2);border:1px solid var(--br);border-bottom:none;border-radius:6px 6px 0 0;font-size:.9rem;color:var(--td);margin-right:4px;user-select:none;}
+.tab.on{background:var(--sf);color:var(--pb);border-color:var(--pb);font-weight:bold;}
+.tc{display:none;padding-top:18px;}
+.tc.on{display:block;}
+/* カード */
+.card{background:var(--sf);border:1px solid var(--br);border-radius:8px;padding:22px;margin-bottom:20px;}
+.card h2{color:var(--pb);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--br);font-size:1.1rem;}
+/* フォームグループ */
+.fg{margin-bottom:14px;}
+.fg>label{display:block;margin-bottom:5px;color:var(--td);font-size:.88rem;font-weight:bold;}
+/* コントロール */
+select,input[type=text],textarea{
+  width:100%;padding:9px 11px;
+  background:var(--s2);color:var(--tx);
+  border:1px solid var(--br);border-radius:5px;
+  font-size:.95rem;font-family:inherit;
+}
+select:focus,input[type=text]:focus,textarea:focus{
+  outline:none;border-color:var(--pb);box-shadow:0 0 6px rgba(0,212,255,.4);
+}
+/* グリッド */
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+/* ラジオ */
+.rg{display:flex;gap:24px;flex-wrap:wrap;padding:4px 0;}
+.rg label{display:flex;align-items:center;cursor:pointer;font-size:.95rem;gap:6px;}
+.rg input[type=radio]{cursor:pointer;accent-color:var(--pb);width:16px;height:16px;}
+/* ボタン */
+.btn{background:var(--db);color:var(--tx);border:1px solid var(--pb);padding:9px 20px;border-radius:5px;cursor:pointer;font-size:.9rem;font-family:inherit;}
+.btn:hover{background:var(--pb);color:var(--bg);}
+.bsub{width:100%;font-size:1.05rem;padding:14px;margin-top:10px;}
+.bsub.btn-error{background:#800000;border-color:#ff1a40;color:#fff;cursor:not-allowed;}
+.bdel{background:transparent;color:#f44;border:1px solid #f44;padding:3px 9px;font-size:.78rem;border-radius:4px;cursor:pointer;font-family:inherit;}
+/* 日付ボックス */
+.dbox{border-radius:7px;padding:14px 16px;margin-top:6px;}
+.dbox.Y{background:rgba(30,25,0,.95);border:2px solid var(--ye);}
+.dbox.B{background:rgba(0,18,51,.95);border:2px solid var(--pb);}
+/* 年月日セレクター */
+.dsel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.dsel-row>label{font-weight:bold;font-size:.88rem;white-space:nowrap;}
+.dbox.Y .dsel-row>label{color:var(--ye);}
+.dbox.B .dsel-row>label{color:var(--cy);}
+.dsel-row select{width:auto;padding:7px 10px;font-size:.95rem;font-weight:bold;}
+.dbox.Y .dsel-row select{color:#ffee66;background:#1a1400;border-color:var(--ye);}
+.dbox.B .dsel-row select{color:#00eeff;background:#020f22;border-color:var(--pb);}
+.dlb{font-size:.9rem;font-weight:bold;padding:5px 10px;border-radius:4px;white-space:nowrap;}
+.dbox.Y .dlb{color:var(--ye);background:rgba(255,221,0,.1);border:1px solid rgba(255,221,0,.3);}
+.dbox.B .dlb{color:#00ffcc;background:rgba(0,255,204,.1);border:1px solid rgba(0,255,204,.3);}
+.bclr{padding:6px 14px;font-size:.82rem;background:rgba(255,34,85,.15);border:1px solid #f25;color:#f79;border-radius:4px;cursor:pointer;font-family:inherit;}
+/* クイックボタン */
+.qr{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.ql{font-size:.8rem;color:var(--td);white-space:nowrap;}
+.qb{padding:4px 12px;border-radius:12px;cursor:pointer;font-size:.8rem;font-family:inherit;background:var(--s2);color:var(--td);border:1px solid var(--br);}
+.qb:hover{background:rgba(0,212,255,.15);border-color:var(--pb);color:var(--tx);}
+.dbox.Y .qb.on{background:var(--ye);color:#000;border-color:var(--ye);font-weight:bold;}
+.dbox.B .qb.on{background:var(--pb);color:var(--bg);border-color:var(--pb);font-weight:bold;}
+.qb.nb.on{background:#555;color:var(--tx);border-color:#888;}
+/* 月単位指定行 */
+.mr{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:6px;}
+.mr select{width:auto;padding:5px 8px;font-size:.84rem;}
+/* テーブル */
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.82rem;}
+th,td{border:1px solid var(--br);padding:7px 9px;text-align:left;vertical-align:middle;}
+th{background:var(--s2);color:var(--pb);font-size:.8rem;white-space:nowrap;}
+tr:hover td{background:rgba(0,212,255,.03);}
+
+/* ===== インライン編集セル＆ポップアップ（BABYMETAL風 黒×赤） ===== */
+.ec{position:relative;white-space:nowrap;min-width:80px;cursor:pointer;}
+.ec-d{display:inline-block;padding:2px 4px;border-radius:4px;transition:background .2s;}
+.ec:hover .ec-d{background:rgba(230,0,18,.15);}
+.ed-popup{
+  display:none;
+  position:absolute;
+  left:0;
+  top:100%;
+  z-index:400;
+  background:linear-gradient(135deg, #0d0d0d 0%, #220005 100%);
+  border:2px solid var(--bm-red);
+  border-radius:8px;
+  padding:14px 16px;
+  min-width:330px;
+  box-shadow:0 8px 25px rgba(230,0,18,.5);
+}
+.edr{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.edr select{
+  width:auto;
+  padding:6px 9px;
+  background:#140003;
+  color:#fff;
+  border:1px solid var(--bm-red);
+  border-radius:5px;
+  font-size:.9rem;
+  font-weight:bold;
+}
+.edr select:focus{outline:none;box-shadow:0 0 8px var(--bm-red);}
+.eok{
+  background:var(--bm-red)!important;
+  color:#fff!important;
+  border:1px solid #ff4466!important;
+  font-weight:bold;
+  padding:5px 15px!important;
+  border-radius:4px;
+  cursor:pointer;
+  font-family:inherit;
+}
+.eok:hover{background:#ff1a40!important;box-shadow:0 0 10px var(--bm-red);}
+.eno{
+  padding:5px 12px;
+  font-size:.82rem;
+  background:#222;
+  color:#aaa;
+  border:1px solid #555;
+  border-radius:4px;
+  cursor:pointer;
+  font-family:inherit;
+}
+.eno:hover{background:#333;color:#fff;}
+.ecl{
+  padding:5px 12px;
+  font-size:.82rem;
+  background:transparent;
+  color:#bbb;
+  border:1px solid #666;
+  border-radius:4px;
+  cursor:pointer;
+  font-family:inherit;
+}
+.ecl:hover{background:rgba(255,255,255,.1);color:#fff;}
+
+/* 進捗 */
+.pw{background:var(--s2);border-radius:4px;height:12px;overflow:hidden;border:1px solid var(--br);margin-top:3px;}
+.pf{height:100%;background:var(--pb);width:0;transition:width .5s;}
+.sr{margin-bottom:12px;}
+/* フィルター */
+.fr{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.fr select,.fr input[type=text]{width:auto;padding:5px 9px;}
+.fr input[type=text]{min-width:100px;max-width:140px;}
+/* 予習日期限切れ警告 */
+.row-overdue td{background:rgba(255,40,40,.09)!important;}
+.row-overdue:hover td{background:rgba(255,40,40,.15)!important;}
+.w-badge{display:inline-block;background:#c62828;color:#fff;padding:1px 6px;border-radius:4px;font-size:.72rem;font-weight:bold;margin-right:4px;vertical-align:middle;}
+.pd-overdue{color:#ff6666!important;font-weight:bold;}
+.pd-today{color:#ffdd00!important;font-weight:bold;}
+.pd-future{color:var(--ye);}
+/* 警告バナー */
+.warn-banner{background:rgba(200,0,0,.18);border:1px solid #c62828;border-radius:7px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:.9rem;}
+.warn-banner strong{color:#ff6666;}
+
+/* ===== BABYMETAL風 黒×赤 重複エラーボックス ===== */
+.dup-error-box{
+  display:none;
+  background:linear-gradient(135deg, var(--bm-black) 0%, var(--bm-red-dark) 100%);
+  border:2px solid var(--bm-red);
+  border-radius:8px;
+  padding:14px 18px;
+  margin:14px 0;
+  box-shadow:0 0 20px var(--bm-red-glow), inset 0 0 10px rgba(230,0,18,.3);
+  animation:bmPulse 1.8s infinite ease-in-out;
+}
+@keyframes bmPulse{
+  0%{box-shadow:0 0 12px rgba(230,0,18,.4), inset 0 0 6px rgba(230,0,18,.2);}
+  50%{box-shadow:0 0 26px rgba(230,0,18,.9), inset 0 0 14px rgba(230,0,18,.4);}
+  100%{box-shadow:0 0 12px rgba(230,0,18,.4), inset 0 0 6px rgba(230,0,18,.2);}
+}
+.dup-error-head{
+  color:var(--bm-red);
+  font-weight:900;
+  font-size:1.02rem;
+  letter-spacing:1px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:6px;
+  text-shadow:0 0 8px var(--bm-red);
+}
+.dup-error-body{
+  color:#fff;
+  font-size:.92rem;
+  line-height:1.5;
+}
+.dup-highlight{
+  color:#ff4466;
+  font-weight:bold;
+  background:rgba(230,0,18,.2);
+  padding:2px 6px;
+  border-radius:4px;
+  border:1px solid rgba(230,0,18,.4);
+}
+.dup-prev-date{
+  color:var(--bm-gold);
+  font-weight:bold;
+}
+
+footer{text-align:center;padding:16px;color:var(--td);font-size:.84rem;border-top:1px solid var(--br);margin-top:20px;}
+</style>
+</head>
+<body>
+<header>
+<svg viewBox="0 0 100 100" class="bear" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="55" r="35" fill="none" stroke="var(--pb)" stroke-width="3"/>
+  <circle cx="22" cy="27" r="12" fill="none" stroke="var(--pb)" stroke-width="3"/>
+  <circle cx="78" cy="27" r="12" fill="none" stroke="var(--pb)" stroke-width="3"/>
+  <circle cx="37" cy="50" r="4" fill="var(--cy)"/>
+  <circle cx="63" cy="50" r="4" fill="var(--cy)"/>
+  <ellipse cx="50" cy="65" rx="6" ry="4" fill="var(--pb)"/>
+  <path d="M44 70 Q50 75 56 70" fill="none" stroke="var(--pb)" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<h1>学習記録 - Bear Sync</h1>
+<a href="index.html" class="hlink">ホームへ戻る</a>
+</header>
+
+<div class="wrap">
+<div class="tabs">
+  <div class="tab on" id="t0">新規記録</div>
+  <div class="tab"    id="t1">科目別進捗</div>
+  <div class="tab"    id="t2">学習履歴</div>
+</div>
+
+<!-- ===== タブ0: 新規記録 ===== -->
+<div class="tc on" id="tc0">
+<div class="card">
+<h2>新規学習記録</h2>
+
+<!-- 科目・年度・区分 -->
+<div class="g3">
+  <div class="fg">
+    <label>科目</label>
+    <select id="fS">
+      <option value="電気に関する基礎理論">1. 電気に関する基礎理論</option>
+      <option value="配電理論及び配線設計">2. 配電理論及び配線設計</option>
+      <option value="電気応用">3. 電気応用</option>
+      <option value="電気機器・蓄電池・配線器具・電気工事用の材料及び工具並びに受電設備">4. 電気機器・配線器具・工具</option>
+      <option value="電気工事の施工方法">5. 電気工事の施工方法</option>
+      <option value="自家用電気工作物の検査方法">6. 自家用電気工作物の検査方法</option>
+      <option value="配線図">7. 配線図</option>
+      <option value="発電施設・送電施設及び変電施設の基礎的な構造及び特性">8. 発電・送電・変電施設</option>
+      <option value="一般用電気工作物及び自家用電気工作物の保安">9. 一般用・自家用電気工作物の保安</option>
+    </select>
+  </div>
+  <div class="fg">
+    <label>年度</label>
+    <select id="fY">
+      <option value="R8">令和8年度 (R8)</option>
+      <option value="R7">令和7年度 (R7)</option>
+      <option value="R6">令和6年度 (R6)</option>
+      <option value="R5">令和5年度 (R5)</option>
+      <option value="R4">令和4年度 (R4)</option>
+      <option value="R3">令和3年度 (R3)</option>
+      <option value="R2">令和2年度 (R2)</option>
+      <option value="R1">令和元年度 (R1)</option>
+      <option value="H30">平成30年度 (H30)</option>
+      <option value="H29">平成29年度 (H29)</option>
+      <option value="H28">平成28年度 (H28)</option>
+      <option value="H27">平成27年度 (H27)</option>
+      <option value="H26">平成26年度 (H26)</option>
+      <option value="H25">平成25年度 (H25)</option>
+    </select>
+  </div>
+  <div class="fg">
+    <label>区分 (R3以降)</label>
+    <select id="fP">
+      <option value="上期午前">上期午前</option>
+      <option value="上期午後">上期午後</option>
+      <option value="下期午前">下期午前</option>
+      <option value="下期午後">下期午後</option>
+      <option value="-">なし (H25-R2)</option>
+    </select>
+  </div>
+</div>
+
+<!-- 問題番号 -->
+<div class="g2">
+  <div class="fg">
+    <label>問題番号を選ぶ（問1〜50）</label>
+    <select id="fQ">
+      <option value="">-- 選択してください（任意）--</option>
+    </select>
+  </div>
+  <div class="fg">
+    <label>問題番号を直接入力（任意）</label>
+    <input type="text" id="fQT" placeholder="例: 問1、A-5 など">
+  </div>
+</div>
+
+<!-- 重複エラー表示エリア（BABYMETAL風 黒×赤） -->
+<div id="dupErrorBox" class="dup-error-box">
+  <div class="dup-error-head">
+    <span>💀 警告：同じ問題がすでに登録されています！ (DUPLICATE ERROR)</span>
+  </div>
+  <div id="dupErrorBody" class="dup-error-body">
+    入力された問題はすでに学習記録に存在します。
+  </div>
+</div>
+
+<!-- 結果 -->
+<div class="fg">
+  <label>結果</label>
+  <div class="rg">
+    <label><input type="radio" name="fR" value="○" id="rOK" checked> ○ 正解</label>
+    <label><input type="radio" name="fR" value="△" id="rHF"> △ まぐれ</label>
+    <label><input type="radio" name="fR" value="×" id="rNG"> × 不正解</label>
+  </div>
+</div>
+
+<!-- 予習予定日（黄色） -->
+<div class="fg">
+  <label style="color:var(--ye);font-size:.95rem;">予習予定日（この問題を予習する日）</label>
+  <div class="dbox Y" id="pdBox">
+    <div class="dsel-row">
+      <label>年：</label>
+      <select id="pdY"><option value="0">--年--</option></select>
+      <label>月：</label>
+      <select id="pdM"><option value="0">--月--</option></select>
+      <label>日：</label>
+      <select id="pdD"><option value="0">--日--</option></select>
+      <span id="pdLb" class="dlb">未設定</span>
+      <button type="button" class="bclr" id="bPCLR">クリア</button>
+    </div>
+    <div class="qr">
+      <span class="ql">クイック：</span>
+      <button type="button" class="qb" id="pp0">今日</button>
+      <button type="button" class="qb" id="pp1">明日</button>
+      <button type="button" class="qb" id="pp3">3日後</button>
+      <button type="button" class="qb" id="pp7">1週間後</button>
+      <button type="button" class="qb" id="pp14">2週間後</button>
+      <button type="button" class="qb" id="pp30">1ヶ月後</button>
+      <button type="button" class="qb nb" id="ppNone">設定しない</button>
+    </div>
+  </div>
+</div>
+
+<!-- 次回復習日（青） -->
+<div class="fg">
+  <label style="color:var(--cy);font-size:.95rem;">次回復習日（解いた後に復習する日）</label>
+  <div class="dbox B" id="rdBox">
+    <div class="dsel-row">
+      <label>年：</label>
+      <select id="rdY"><option value="0">--年--</option></select>
+      <label>月：</label>
+      <select id="rdM"><option value="0">--月--</option></select>
+      <label>日：</label>
+      <select id="rdD"><option value="0">--日--</option></select>
+      <span id="rdLb" class="dlb">未設定（復習不要）</span>
+      <button type="button" class="bclr" id="bRCLR">クリア</button>
+    </div>
+    <div class="qr">
+      <span class="ql">クイック：</span>
+      <button type="button" class="qb" id="rb1d">翌日</button>
+      <button type="button" class="qb" id="rb7d">1週間</button>
+      <button type="button" class="qb" id="rb14d">2週間</button>
+      <button type="button" class="qb" id="rb1m">1ヶ月</button>
+      <button type="button" class="qb" id="rb2m">2ヶ月</button>
+      <button type="button" class="qb" id="rb3m">3ヶ月</button>
+      <button type="button" class="qb" id="rb6m">6ヶ月</button>
+      <button type="button" class="qb nb" id="rbNone">なし（復習不要）</button>
+    </div>
+    <div class="mr">
+      <span class="ql">月単位指定：</span>
+      <select id="fMo">
+        <option value="0">-- 月数 --</option>
+        <option value="1">1ヶ月後</option><option value="2">2ヶ月後</option>
+        <option value="3">3ヶ月後</option><option value="4">4ヶ月後</option>
+        <option value="5">5ヶ月後</option><option value="6">6ヶ月後</option>
+        <option value="7">7ヶ月後</option><option value="8">8ヶ月後</option>
+        <option value="9">9ヶ月後</option><option value="10">10ヶ月後</option>
+        <option value="11">11ヶ月後</option><option value="12">12ヶ月後</option>
+      </select>
+      <select id="fWk">
+        <option value="0">+0週</option><option value="1">+1週</option>
+        <option value="2">+2週</option><option value="3">+3週</option>
+      </select>
+      <button type="button" class="btn" id="bMA" style="padding:5px 13px;font-size:.83rem;">適用</button>
+    </div>
+  </div>
+</div>
+
+<!-- メモ -->
+<div class="fg">
+  <label>メモ・解説・ポイント（任意）</label>
+  <textarea id="fMM" rows="3" placeholder="間違えた理由・覚えるべきポイントを記入"></textarea>
+</div>
+
+<button type="button" class="btn bsub" id="bSUB">記録する</button>
+</div>
+</div>
+
+<!-- ===== タブ1: 科目別進捗 ===== -->
+<div class="tc" id="tc1">
+<div class="card">
+  <h2>科目別正解率</h2>
+  <div id="dash"></div>
+</div>
+</div>
+
+<!-- ===== タブ2: 学習履歴 ===== -->
+<div class="tc" id="tc2">
+<div class="card">
+  <h2>学習履歴</h2>
+  <!-- 警告バナー（JS で制御） -->
+  <div id="warnBanner" class="warn-banner" style="display:none;">
+    <span style="font-size:1.3rem;">⚠</span>
+    <div><strong id="warnCount">0件</strong>の予習が期限切れです。予習日フィルター「期限切れ」で確認してください。</div>
+  </div>
+  <!-- フィルター行 -->
+  <div class="fr">
+    <select id="fFS"><option value="">全科目</option></select>
+    <select id="fFR">
+      <option value="">全結果</option>
+      <option value="○">○のみ</option>
+      <option value="△">△のみ</option>
+      <option value="×">×のみ</option>
+    </select>
+    <select id="fFY">
+      <option value="">全年度</option>
+      <option value="R8">R8</option><option value="R7">R7</option>
+      <option value="R6">R6</option><option value="R5">R5</option>
+      <option value="R4">R4</option><option value="R3">R3</option>
+      <option value="R2">R2</option><option value="R1">R1</option>
+      <option value="H30">H30</option><option value="H29">H29</option>
+      <option value="H28">H28</option><option value="H27">H27</option>
+      <option value="H26">H26</option><option value="H25">H25</option>
+    </select>
+    <input type="text" id="fFQ" placeholder="問番号で検索">
+    <select id="fFPD">
+      <option value="">予習日: すべて</option>
+      <option value="overdue">⚠ 期限切れ</option>
+      <option value="today">今日</option>
+      <option value="future">未来（予定）</option>
+      <option value="unset">未設定</option>
+    </select>
+    <button type="button" class="btn" id="bCSV" style="padding:5px 13px;font-size:.83rem;">CSV出力</button>
+  </div>
+  <div style="overflow-x:auto;">
+  <table>
+  <thead><tr>
+    <th>記録日</th><th>科目</th><th>年度/区分</th><th>問番号</th>
+    <th>結果</th><th>予習予定日 ✎</th><th>次回復習日 ✎</th><th>メモ</th><th>操作</th>
+  </tr></thead>
+  <tbody id="TB"></tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+</div><!-- .wrap -->
+<footer>Bear Sync - 第一種電気工事士 合格への道</footer>
+
+<script>
+/* ============================================================
+   定数
+============================================================ */
+var KEY  = 'denkoji1_training_log';
+var OLD  = ['H25','H26','H27','H28','H29','H30','R1','R2'];
+var SUBS = [
+  '電気に関する基礎理論',
+  '配電理論及び配線設計',
+  '電気応用',
+  '電気機器・蓄電池・配線器具・電気工事用の材料及び工具並びに受電設備',
+  '電気工事の施工方法',
+  '自家用電気工作物の検査方法',
+  '配線図',
+  '発電施設・送電施設及び変電施設の基礎的な構造及び特性',
+  '一般用電気工作物及び自家用電気工作物の保安'
+];
+
+/* ============================================================
+   LocalStorage
+============================================================ */
+function load(){
+  try{ return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+  catch(e){ return []; }
+}
+function store(d){ localStorage.setItem(KEY, JSON.stringify(d)); }
+function refresh(d){ store(d); drawDash(); drawTable(); checkDuplicateLive(); }
+
+/* ============================================================
+   日付ユーティリティ
+============================================================ */
+/* days日 + months月 + weeks週後の Date オブジェクト */
+function addD(days, months, weeks){
+  var d = new Date();
+  if(months > 0) d.setMonth(d.getMonth() + months);
+  if(weeks  > 0) d.setDate(d.getDate() + weeks * 7);
+  if(days   > 0) d.setDate(d.getDate() + days);
+  return d;
+}
+
+/* Date → YYYY-MM-DD */
+function toYMD(d){
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2,'0');
+  var day = String(d.getDate()).padStart(2,'0');
+  return y + '-' + m + '-' + day;
+}
+
+/* YYYY-MM-DD → 「M月D日」 */
+function jpDate(ds){
+  if(!ds) return '未設定';
+  var parts = ds.split('-');
+  var y = parseInt(parts[0]);
+  var m = parseInt(parts[1]);
+  var d = parseInt(parts[2]);
+  var nowY = new Date().getFullYear();
+  return y === nowY ? m + '月' + d + '日' : y + '年' + m + '月' + d + '日';
+}
+
+/* ============================================================
+   年月日ドロップダウン 初期化・操作
+============================================================ */
+
+/* 年セレクト初期化（今年〜今年+4） */
+function initYearSel(selId){
+  var sel = document.getElementById(selId);
+  var ty  = new Date().getFullYear();
+  for(var y = ty - 1; y <= ty + 4; y++){
+    var o = document.createElement('option');
+    o.value = y; o.textContent = y + '年';
+    sel.appendChild(o);
+  }
+}
+
+/* 月セレクト初期化（1〜12） */
+function initMonthSel(selId){
+  var sel = document.getElementById(selId);
+  for(var m = 1; m <= 12; m++){
+    var o = document.createElement('option');
+    o.value = m; o.textContent = m + '月';
+    sel.appendChild(o);
+  }
+}
+
+/* 月末日を計算して日セレクトを更新 */
+function updateDaySel(yId, mId, dId){
+  var y   = parseInt(document.getElementById(yId).value);
+  var m   = parseInt(document.getElementById(mId).value);
+  var dSel= document.getElementById(dId);
+  var cur = parseInt(dSel.value) || 1;
+  dSel.innerHTML = '<option value="0">--日--</option>';
+  if(y === 0 || m === 0) return;
+  var maxD = new Date(y, m, 0).getDate(); /* 月末日 */
+  for(var i = 1; i <= maxD; i++){
+    var o = document.createElement('option');
+    o.value = i; o.textContent = i + '日';
+    dSel.appendChild(o);
+  }
+  dSel.value = Math.min(cur, maxD);
+}
+
+/* セレクトから YYYY-MM-DD を取得（未設定の場合 null） */
+function selToYMD(yId, mId, dId){
+  var y = parseInt(document.getElementById(yId).value);
+  var m = parseInt(document.getElementById(mId).value);
+  var d = parseInt(document.getElementById(dId).value);
+  if(y === 0 || m === 0 || d === 0) return null;
+  return y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+}
+
+/* Date → セレクトに設定 */
+function setSelFromDate(yId, mId, dId, dt){
+  var y = dt.getFullYear();
+  var m = dt.getMonth() + 1;
+  var d = dt.getDate();
+  document.getElementById(yId).value = y;
+  document.getElementById(mId).value = m;
+  updateDaySel(yId, mId, dId);
+  document.getElementById(dId).value = d;
+}
+
+/* セレクトをクリア（--選択--に戻す） */
+function clearSel(yId, mId, dId){
+  document.getElementById(yId).value = 0;
+  document.getElementById(mId).value = 0;
+  document.getElementById(dId).innerHTML = '<option value="0">--日--</option>';
+}
+
+/* ============================================================
+   予習日 UI
+============================================================ */
+function updatePdLabel(){
+  var ds  = selToYMD('pdY','pdM','pdD');
+  var lb  = document.getElementById('pdLb');
+  lb.textContent = ds ? jpDate(ds) : '未設定';
+  lb.style.color = ds ? 'var(--ye)' : 'var(--td)';
+  /* ボタンの active リセット */
+  document.getElementById('pdBox').querySelectorAll('.qb').forEach(function(b){ b.classList.remove('on'); });
+}
+
+function setPdFromDate(dt){
+  setSelFromDate('pdY','pdM','pdD', dt);
+  updatePdLabel();
+}
+
+function clearPd(){
+  clearSel('pdY','pdM','pdD');
+  updatePdLabel();
+  document.getElementById('ppNone').classList.add('on');
+}
+
+/* ============================================================
+   復習日 UI
+============================================================ */
+function updateRdLabel(){
+  var ds = selToYMD('rdY','rdM','rdD');
+  var lb = document.getElementById('rdLb');
+  lb.textContent = ds ? jpDate(ds) : '未設定（復習不要）';
+  lb.style.color = ds ? 'var(--cy)' : 'var(--td)';
+  document.getElementById('rdBox').querySelectorAll('.qb').forEach(function(b){ b.classList.remove('on'); });
+}
+
+function setRdFromDate(dt){
+  setSelFromDate('rdY','rdM','rdD', dt);
+  updateRdLabel();
+}
+
+function clearRd(){
+  clearSel('rdY','rdM','rdD');
+  updateRdLabel();
+  document.getElementById('rbNone').classList.add('on');
+}
+
+/* ============================================================
+   初期化: 年月日セレクトのオプションを生成
+============================================================ */
+initYearSel('pdY'); initMonthSel('pdM');
+initYearSel('rdY'); initMonthSel('rdM');
+
+/* 月変更時に日セレクトを更新 */
+document.getElementById('pdY').addEventListener('change', function(){ updateDaySel('pdY','pdM','pdD'); updatePdLabel(); });
+document.getElementById('pdM').addEventListener('change', function(){ updateDaySel('pdY','pdM','pdD'); updatePdLabel(); });
+document.getElementById('pdD').addEventListener('change', function(){ updatePdLabel(); });
+document.getElementById('rdY').addEventListener('change', function(){ updateDaySel('rdY','rdM','rdD'); updateRdLabel(); });
+document.getElementById('rdM').addEventListener('change', function(){ updateDaySel('rdY','rdM','rdD'); updateRdLabel(); });
+document.getElementById('rdD').addEventListener('change', function(){ updateRdLabel(); });
+
+/* ============================================================
+   予習日クイックボタン
+============================================================ */
+document.getElementById('bPCLR').addEventListener('click', function(){ clearPd(); });
+document.getElementById('ppNone').addEventListener('click', function(){ clearPd(); });
+
+var pPresets = [
+  ['pp0',  0, 0, 0],
+  ['pp1',  1, 0, 0],
+  ['pp3',  3, 0, 0],
+  ['pp7',  7, 0, 0],
+  ['pp14',14, 0, 0],
+  ['pp30', 0, 1, 0]
+];
+pPresets.forEach(function(p){
+  document.getElementById(p[0]).addEventListener('click', function(){
+    setPdFromDate(addD(p[1], p[2], p[3]));
+    var btn = document.getElementById(p[0]);
+    document.getElementById('pdBox').querySelectorAll('.qb').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  });
+});
+
+/* ============================================================
+   復習日クイックボタン
+============================================================ */
+document.getElementById('bRCLR').addEventListener('click', function(){ clearRd(); });
+document.getElementById('rbNone').addEventListener('click', function(){ clearRd(); });
+
+var rPresets = [
+  ['rb1d',  1, 0, 0],
+  ['rb7d',  7, 0, 0],
+  ['rb14d',14, 0, 0],
+  ['rb1m',  0, 1, 0],
+  ['rb2m',  0, 2, 0],
+  ['rb3m',  0, 3, 0],
+  ['rb6m',  0, 6, 0]
+];
+rPresets.forEach(function(p){
+  document.getElementById(p[0]).addEventListener('click', function(){
+    setRdFromDate(addD(p[1], p[2], p[3]));
+    var btn = document.getElementById(p[0]);
+    document.getElementById('rdBox').querySelectorAll('.qb').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  });
+});
+
+/* 月単位「適用」ボタン */
+document.getElementById('bMA').addEventListener('click', function(){
+  var m = parseInt(document.getElementById('fMo').value);
+  var w = parseInt(document.getElementById('fWk').value);
+  if(m === 0 && w === 0){ alert('月数または週数を選択してください'); return; }
+  setRdFromDate(addD(0, m, w));
+});
+
+/* ============================================================
+   年度変更 → 区分セレクト更新
+============================================================ */
+document.getElementById('fY').addEventListener('change', function(){
+  var isOld = OLD.indexOf(this.value) >= 0;
+  var fP = document.getElementById('fP');
+  fP.disabled = isOld;
+  if(isOld) fP.value = '-';
+  else if(fP.value === '-') fP.value = '上期午前';
+  checkDuplicateLive();
+});
+
+/* ============================================================
+   問題番号セレクト初期化（問1〜50）
+============================================================ */
+(function(){
+  var sel = document.getElementById('fQ');
+  for(var i = 1; i <= 50; i++){
+    var o = document.createElement('option');
+    o.value = '問' + i;
+    o.textContent = '問' + i;
+    sel.appendChild(o);
+  }
+})();
+
+/* ============================================================
+   結果変更 → 復習日自動プリセット
+============================================================ */
+document.getElementById('rOK').addEventListener('change', function(){
+  if(this.checked){ clearRd(); }
+});
+document.getElementById('rHF').addEventListener('change', function(){
+  if(this.checked){
+    setRdFromDate(addD(0,1,0));
+    document.getElementById('rdBox').querySelectorAll('.qb').forEach(function(b){ b.classList.remove('on'); });
+    document.getElementById('rb1m').classList.add('on');
+  }
+});
+document.getElementById('rNG').addEventListener('change', function(){
+  if(this.checked){
+    setRdFromDate(addD(1,0,0));
+    document.getElementById('rdBox').querySelectorAll('.qb').forEach(function(b){ b.classList.remove('on'); });
+    document.getElementById('rb1d').classList.add('on');
+  }
+});
+
+/* ============================================================
+   重複問題チェック（BABYMETAL風 エラー制御）
+============================================================ */
+
+/* 問題番号の表記ゆれを吸収する正規化関数 */
+function normalizeQNum(qStr){
+  if(!qStr) return '';
+  /* 全角数字を半角に統一し余分な空白を除去する変数 */
+  var s = qStr.trim().replace(/[０-９]/g, function(c){
+    return String.fromCharCode(c.charCodeAt(0) - 0xFEE0);
+  }).replace(/\s+/g, '');
+  /* 「1」など数字のみで入力された場合は「問1」に統一 */
+  if(/^([0-9]+)$/.test(s)){
+    return '問' + s;
+  }
+  return s;
+}
+
+/* 入力中の問題がすでに登録済みか探す関数（重複レコードを返却） */
+function getDuplicateRecord(){
+  var sub = document.getElementById('fS').value; /* 選択科目 */
+  var yr  = document.getElementById('fY').value; /* 選択年度 */
+  var prd = document.getElementById('fP').value; /* 選択区分 */
+  var qS  = document.getElementById('fQ').value;  /* プルダウン問題番号 */
+  var qT  = document.getElementById('fQT').value.trim(); /* 手入力問題番号 */
+  var rawQ = qS || qT; /* 最終的な問題番号 */
+
+  if(!rawQ) return null;
+  var normQ = normalizeQNum(rawQ);
+  var logs = load(); /* 保存済みレコード配列 */
+
+  for(var i = 0; i < logs.length; i++){
+    var log = logs[i];
+    var logPrd = (log.period || '-');
+    var curPrd = (prd || '-');
+    var logQ   = normalizeQNum(log.qNum);
+
+    /* 科目・年度・区分・問題番号が一致するか判定 */
+    if(log.subject === sub && log.year === yr && logPrd === curPrd && logQ === normQ){
+      return log; /* 重複データが見つかった */
+    }
+  }
+  return null;
+}
+
+/* リアルタイムで重複を検知して画面に警告を表示する関数 */
+function checkDuplicateLive(){
+  var dupLog = getDuplicateRecord();
+  var errBox = document.getElementById('dupErrorBox');
+  var errBody= document.getElementById('dupErrorBody');
+  var subBtn = document.getElementById('bSUB');
+
+  if(dupLog){
+    /* 重複がある場合: BABYMETAL風の黒×赤エラーボックスを表示 */
+    var prText = (dupLog.period && dupLog.period !== '-') ? ' ' + dupLog.period : '';
+    errBody.innerHTML =
+      'この問題（<span class="dup-highlight">' + dupLog.year + prText + ' ' + (dupLog.qNum || '') + '</span>）は、すでに '
+      + '<span class="dup-prev-date">' + dupLog.recordDate + '</span> に結果【<strong>' + dupLog.result + '</strong>】で登録されています！<br>'
+      + '※同じ問題を二重登録することはできません。';
+    errBox.style.display = 'block';
+    subBtn.classList.add('btn-error');
+    subBtn.textContent = '⚠ 同じ問題が登録済みのため記録不可';
+  } else {
+    /* 重複がない場合: 通常状態へ戻す */
+    errBox.style.display = 'none';
+    subBtn.classList.remove('btn-error');
+    if(subBtn.textContent === '⚠ 同じ問題が登録済みのため記録不可'){
+      subBtn.textContent = '記録する';
+    }
+  }
+}
+
+/* 入力欄の変更イベントを監視して即時判定 */
+document.getElementById('fS').addEventListener('change', checkDuplicateLive);
+document.getElementById('fP').addEventListener('change', checkDuplicateLive);
+document.getElementById('fQ').addEventListener('change', function(){
+  /* プルダウンを選んだら手入力欄をクリア */
+  if(this.value) document.getElementById('fQT').value = '';
+  checkDuplicateLive();
+});
+document.getElementById('fQT').addEventListener('input', function(){
+  /* 手入力したらプルダウンをリセット */
+  if(this.value.trim()) document.getElementById('fQ').value = '';
+  checkDuplicateLive();
+});
+
+/* ============================================================
+   フォーム送信（重複時は厳格にブロック）
+============================================================ */
+document.getElementById('bSUB').addEventListener('click', function(){
+  var qS = document.getElementById('fQ').value;
+  var qT = document.getElementById('fQT').value.trim();
+  var qNum = qS || qT || '';
+
+  /* 1. 問題番号の未入力チェック */
+  if(!qNum){
+    alert('【入力エラー】問題番号を選択するか、直接入力してください。');
+    document.getElementById('fQ').focus();
+    return;
+  }
+
+  /* 2. 重複チェック */
+  var dupLog = getDuplicateRecord();
+  if(dupLog){
+    var prText = (dupLog.period && dupLog.period !== '-') ? ' ' + dupLog.period : '';
+    /* BABYMETAL風の黒赤エラーボックスをアニメーション強調 */
+    var errBox = document.getElementById('dupErrorBox');
+    errBox.style.display = 'block';
+    errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    alert(
+      '【重複エラー】この問題はすでに登録されています！\n\n' +
+      '・科目: ' + dupLog.subject + '\n' +
+      '・年度/区分: ' + dupLog.year + prText + '\n' +
+      '・問題番号: ' + dupLog.qNum + '\n' +
+      '・前回の記録日: ' + dupLog.recordDate + ' (結果: ' + dupLog.result + ')\n\n' +
+      '同じ問題の二重登録はできません。別の問題番号を指定してください。'
+    );
+    return;
+  }
+
+  /* 3. 重複がない場合のみ新規レコードを保存 */
+  var rec = {
+    id:             Date.now().toString(),
+    subject:        document.getElementById('fS').value,
+    year:           document.getElementById('fY').value,
+    period:         document.getElementById('fP').value,
+    qNum:           qNum,
+    result:         document.querySelector('input[name="fR"]:checked').value,
+    memo:           document.getElementById('fMM').value,
+    recordDate:     toYMD(new Date()),
+    previewDate:    selToYMD('pdY','pdM','pdD'),
+    nextReviewDate: selToYMD('rdY','rdM','rdD'),
+    intervalLevel:  0
+  };
+  var data = load();
+  data.push(rec);
+  refresh(data);
+
+  /* 入力欄のリセット */
+  document.getElementById('fQ').value  = '';
+  document.getElementById('fQT').value = '';
+  document.getElementById('fMM').value = '';
+  document.getElementById('rOK').checked = true;
+  clearPd();
+  clearRd();
+  document.getElementById('fMo').value = '0';
+  document.getElementById('fWk').value = '0';
+  checkDuplicateLive();
+
+  /* 完了フラッシュ */
+  var b = this;
+  b.textContent = '記録しました！';
+  b.style.background = '#004422';
+  b.style.borderColor = '#00cc66';
+  setTimeout(function(){
+    b.textContent = '記録する';
+    b.style.background = '';
+    b.style.borderColor = '';
+  }, 1800);
+});
+
+/* ============================================================
+   テーブル描画 & インライン編集ポップアップ
+============================================================ */
+function edHTML(fld, log){
+  /* インライン編集ポップアップ（年・月・日の3つのセレクトボックス） */
+  var h = '<div class="edr">'
+        + '<label style="color:#ff4466;font-size:.84rem;font-weight:bold;margin-right:2px;">📅 日付選択:</label>'
+        + '<select class="ey" title="年"></select>'
+        + '<select class="em" title="月"></select>'
+        + '<select class="eday" title="日"></select>'
+        + '</div>'
+        + '<div class="edr" style="margin-bottom:0;">'
+        + '<button type="button" class="eok">確定</button>'
+        + '<button type="button" class="eno">未設定/なし</button>'
+        + '<button type="button" class="ecl">閉じる</button>'
+        + '</div>';
+  return h;
+}
+
+function setupEdSel(cell, log, fld){
+  var ey   = cell.querySelector('.ey');
+  var em   = cell.querySelector('.em');
+  var eday = cell.querySelector('.eday'); /* 「日」セレクト（クラス名競合を解消） */
+
+  /* 年選択肢（今年-1 〜 今年+4） */
+  var ty = new Date().getFullYear();
+  ey.innerHTML = '<option value="0">--年--</option>';
+  for(var y = ty - 1; y <= ty + 4; y++) ey.innerHTML += '<option value="'+y+'">'+y+'年</option>';
+
+  /* 月選択肢（1〜12月） */
+  em.innerHTML = '<option value="0">--月--</option>';
+  for(var m = 1; m <= 12; m++) em.innerHTML += '<option value="'+m+'">'+m+'月</option>';
+
+  /* 日選択肢の更新関数（選択中の年月の日数を正確に反映） */
+  function du(){
+    var yv = parseInt(ey.value), mv = parseInt(em.value);
+    var cur = parseInt(eday.value) || 1;
+    eday.innerHTML = '<option value="0">--日--</option>';
+    if(yv === 0 || mv === 0) return;
+    var max = new Date(yv, mv, 0).getDate(); /* 月末日 */
+    for(var i = 1; i <= max; i++) eday.innerHTML += '<option value="'+i+'">'+i+'日</option>';
+    eday.value = Math.min(cur, max);
+  }
+  ey.addEventListener('change', du);
+  em.addEventListener('change', du);
+
+  /* 現在値の初期セット（既存の日付があればそれを、なければ本日の日付をデフォルトにする） */
+  var cv = log[fld];
+  if(cv){
+    /* レコードに既存の日付がある場合: その年月日を選択状態にする */
+    var parts = cv.split('-');
+    ey.value = parseInt(parts[0]); /* 年をセット */
+    em.value = parseInt(parts[1]); /* 月をセット */
+    du(); /* 月末日を計算して日の選択肢を生成 */
+    eday.value = parseInt(parts[2]); /* 日をセット */
+  } else {
+    /* 未設定の場合: 本日の日付をデフォルト値としてセット */
+    var today = new Date();
+    ey.value = today.getFullYear();          /* 今日の年をセット */
+    em.value = today.getMonth() + 1;         /* 今日の月をセット（0始まりなので+1） */
+    du(); /* 月末日を計算して日の選択肢を生成 */
+    eday.value = today.getDate();             /* 今日の日にちをセット */
+  }
+}
+
+function drawTable(){
+  var data = load();
+  var tb   = document.getElementById('TB');
+  var fs   = document.getElementById('fFS').value;    /* 科目フィルター */
+  var fr   = document.getElementById('fFR').value;    /* 結果フィルター */
+  var fy   = document.getElementById('fFY').value;    /* 年度フィルター */
+  var fq   = (document.getElementById('fFQ').value || '').trim().toLowerCase(); /* 問番号テキスト */
+  var fpd  = document.getElementById('fFPD').value;   /* 予習日フィルター */
+  var td   = toYMD(new Date());                       /* 今日の YYYY-MM-DD */
+  tb.innerHTML = '';
+
+  /* 期限切れ件数を全データから集計（フィルターに関係なく） */
+  var overdueCount = data.filter(function(l){
+    return l.previewDate && l.previewDate < td;
+  }).length;
+  var banner = document.getElementById('warnBanner');
+  var warnCnt = document.getElementById('warnCount');
+  if(overdueCount > 0){
+    banner.style.display = 'flex';
+    warnCnt.textContent  = overdueCount + '件';
+  } else {
+    banner.style.display = 'none';
+  }
+
+  /* ソート（記録日降順） */
+  var sorted = data.slice().sort(function(a,b){ return b.recordDate.localeCompare(a.recordDate); });
+
+  sorted.forEach(function(log){
+    /* ===== フィルター適用 ===== */
+    if(fs && log.subject !== fs) return;
+    if(fr && log.result  !== fr) return;
+    if(fy && log.year    !== fy) return;
+    /* 問番号テキスト: 部分一致（大文字小文字無視） */
+    if(fq && !(log.qNum || '').toLowerCase().includes(fq)) return;
+    /* 予習日フィルター */
+    if(fpd === 'overdue' && !(log.previewDate && log.previewDate < td)) return;
+    if(fpd === 'today'   && log.previewDate !== td)                      return;
+    if(fpd === 'future'  && !(log.previewDate && log.previewDate > td))  return;
+    if(fpd === 'unset'   && log.previewDate)                             return;
+
+    /* ===== 表示内容の準備 ===== */
+    var rc = log.result==='○' ? '#0fc' : log.result==='×' ? '#f44' : '#fc0';
+    var sn = log.subject.length > 12 ? log.subject.slice(0,12)+'…' : log.subject;
+    var pr = (log.period && log.period !== '-') ? ' ' + log.period : '';
+    var mn = log.memo ? (log.memo.length > 18 ? log.memo.slice(0,18)+'…' : log.memo) : '-';
+
+    /* 予習日: 期限切れ→赤警告 / 今日→黄 / 未来→黄色 / 未設定→グレー */
+    var isOverdue = log.previewDate && log.previewDate < td;
+    var isToday   = log.previewDate === td;
+    var pdH;
+    if(isOverdue){
+      pdH = '<span class="pd-overdue"><span class="w-badge">期限切れ</span>'
+          + jpDate(log.previewDate) + ' ✎</span>';
+    } else if(isToday){
+      pdH = '<span class="pd-today">📅 今日 ✎</span>';
+    } else if(log.previewDate){
+      pdH = '<span class="pd-future">' + jpDate(log.previewDate) + ' ✎</span>';
+    } else {
+      pdH = '<span style="color:#555;">未設定 ✎</span>';
+    }
+
+    var rdH = log.nextReviewDate
+      ? '<span style="color:var(--cy);">' + jpDate(log.nextReviewDate) + ' ✎</span>'
+      : '<span style="color:#555;">なし ✎</span>';
+
+    var tr = document.createElement('tr');
+    /* 期限切れ行に警告クラスを付与 */
+    if(isOverdue) tr.className = 'row-overdue';
+
+    tr.innerHTML =
+      '<td>'+log.recordDate+'</td>'
+      +'<td title="'+log.subject+'">'+sn+'</td>'
+      +'<td>'+log.year+pr+'</td>'
+      +'<td>'+(log.qNum||'-')+'</td>'
+      +'<td style="color:'+rc+';font-weight:bold;text-align:center;">'+log.result+'</td>'
+      +'<td class="ec" data-fld="previewDate"><div class="ec-d">'+pdH+'</div><div class="ed-popup">'+edHTML('previewDate',log)+'</div></td>'
+      +'<td class="ec" data-fld="nextReviewDate"><div class="ec-d">'+rdH+'</div><div class="ed-popup">'+edHTML('nextReviewDate',log)+'</div></td>'
+      +'<td title="'+(log.memo||'')+'">'+mn+'</td>'
+      +'<td><button type="button" class="bdel" data-del="'+log.id+'">削除</button></td>';
+    tb.appendChild(tr);
+
+    tr.querySelectorAll('.ec').forEach(function(cell){
+      var popup = cell.querySelector('.ed-popup');
+      cell.style.position = 'relative';
+
+      var fld2 = cell.dataset.fld;
+      setupEdSel(popup, log, fld2);
+
+      cell.querySelector('.ec-d').addEventListener('click', function(){
+        document.querySelectorAll('.ed-popup').forEach(function(p){ if(p!==popup) p.style.display='none'; });
+        popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+      });
+      cell.querySelector('.eok').addEventListener('click', function(){
+        var yv = parseInt(popup.querySelector('.ey').value);
+        var mv = parseInt(popup.querySelector('.em').value);
+        var dv = parseInt(popup.querySelector('.eday').value); /* edayクラスから正確に日を取得 */
+        if(yv===0 || mv===0 || dv===0){
+          alert('【入力エラー】年・月・日をすべて選択してください。');
+          return;
+        }
+        var ds = yv + '-' + String(mv).padStart(2,'0') + '-' + String(dv).padStart(2,'0');
+        var d2 = load();
+        var i  = d2.findIndex(function(l){ return l.id === log.id; });
+        if(i !== -1){
+          d2[i][fld2] = ds;
+          refresh(d2);
+        }
+      });
+      cell.querySelector('.eno').addEventListener('click', function(){
+        var d2 = load();
+        var i  = d2.findIndex(function(l){ return l.id === log.id; });
+        if(i !== -1){
+          d2[i][fld2] = null;
+          refresh(d2);
+        }
+      });
+      cell.querySelector('.ecl').addEventListener('click', function(){ popup.style.display='none'; });
+    });
+
+    tr.querySelector('.bdel').addEventListener('click', function(){
+      if(!confirm('この記録を削除しますか？')) return;
+      var id2 = this.dataset.del;
+      refresh(load().filter(function(l){ return l.id !== id2; }));
+    });
+  });
+}
+
+/* ============================================================
+   ダッシュボード描画
+============================================================ */
+function drawDash(){
+  var data = load();
+  var box  = document.getElementById('dash');
+  box.innerHTML = '';
+  var ta = 0, tok = 0;
+  SUBS.forEach(function(s){
+    var logs = data.filter(function(l){ return l.subject === s; });
+    var tot  = logs.length;
+    var ok   = logs.filter(function(l){ return l.result === '○'; }).length;
+    ta += tot; tok += ok;
+    var rate = tot > 0 ? Math.round(ok / tot * 100) : 0;
+    var sh   = s.length > 22 ? s.slice(0,22)+'…' : s;
+    var div  = document.createElement('div');
+    div.className = 'sr';
+    div.innerHTML =
+      '<div style="display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:3px;">'
+      +'<span title="'+s+'">'+sh+'</span>'
+      +'<span style="color:var(--cy);font-weight:bold;">'+ok+'/'+tot+' ('+rate+'%)</span></div>'
+      +'<div class="pw"><div class="pf" style="width:'+rate+'%"></div></div>';
+    box.appendChild(div);
+  });
+  var tr2 = ta > 0 ? Math.round(tok/ta*100) : 0;
+  var td  = document.createElement('div');
+  td.innerHTML =
+    '<div style="display:flex;justify-content:space-between;color:var(--cy);font-weight:bold;margin-top:12px;border-top:1px solid var(--br);padding-top:8px;font-size:.95rem;">'
+    +'<span>総合正解率</span><span>'+tok+'/'+ta+' ('+tr2+'%)</span></div>'
+    +'<div class="pw" style="height:18px;margin-top:5px;">'
+    +'<div class="pf" style="width:'+tr2+'%;background:var(--cy);box-shadow:0 0 12px var(--cy);"></div></div>';
+  box.appendChild(td);
+}
+
+/* ============================================================
+   CSV
+============================================================ */
+document.getElementById('bCSV').addEventListener('click', function(){
+  var data = load();
+  if(!data.length){ alert('データがありません'); return; }
+  var h = ['ID','科目','年度','区分','問題番号','結果','メモ','記録日','予習予定日','次回復習日'];
+  var rows = [h.join(',')];
+  data.forEach(function(l){
+    rows.push([
+      l.id,'"'+l.subject+'"',l.year,l.period,l.qNum||'',l.result,
+      '"'+(l.memo||'').replace(/"/g,'""')+'"',
+      l.recordDate, l.previewDate||'', l.nextReviewDate||''
+    ].join(','));
+  });
+  var blob = new Blob(['\uFEFF'+rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'denkoji1_log.csv'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ============================================================
+   タブ切り替え
+============================================================ */
+function showTab(n){
+  for(var i = 0; i < 3; i++){
+    document.getElementById('tc'+i).classList.remove('on');
+    document.getElementById('t'+i).classList.remove('on');
+  }
+  document.getElementById('tc'+n).classList.add('on');
+  document.getElementById('t'+n).classList.add('on');
+  if(n===0) checkDuplicateLive();
+  if(n===1) drawDash();
+  if(n===2) drawTable();
+}
+document.getElementById('t0').addEventListener('click', function(){ showTab(0); });
+document.getElementById('t1').addEventListener('click', function(){ showTab(1); });
+document.getElementById('t2').addEventListener('click', function(){ showTab(2); });
+
+/* ============================================================
+   外側クリックでポップアップを閉じる
+============================================================ */
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.ec'))
+    document.querySelectorAll('.ed-popup').forEach(function(p){ p.style.display='none'; });
+});
+
+/* ============================================================
+   フィルター初期化
+============================================================ */
+var fFS = document.getElementById('fFS');
+SUBS.forEach(function(s){
+  var o = document.createElement('option');
+  o.value = s;
+  o.textContent = s.length > 15 ? s.slice(0,15)+'…' : s;
+  o.title = s;
+  fFS.appendChild(o);
+});
+document.getElementById('fFS').addEventListener('change', drawTable);
+document.getElementById('fFR').addEventListener('change', drawTable);
+document.getElementById('fFY').addEventListener('change', drawTable);
+document.getElementById('fFQ').addEventListener('input',  drawTable);
+document.getElementById('fFPD').addEventListener('change', drawTable);
+
+/* ============================================================
+   初期描画
+============================================================ */
+clearPd();
+clearRd();
+drawDash();
+drawTable();
+checkDuplicateLive();
+</script>
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>過去問 BEAR TRAINING - 第一種電気工事士</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --primary-blue:   #00d4ff;
+      --deep-blue:      #0044cc;
+      --dark-bg:        #000814;
+      --surface:        #001233;
+      --surface2:       #0a1628;
+      --accent-cyan:    #00ffcc;
+      --accent-purple:  #7b2fff;
+      --text:           #e0f4ff;
+      --text-dim:       #8ab4d4;
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      color: var(--text);
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--surface), var(--deep-blue));
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid var(--primary-blue);
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .bear-logo {
+      width: 80px;
+      height: 80px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--text);
+      font-size: 1.8rem;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* ヘッダーナビ */
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .nav-bar a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      border: 1px solid var(--primary-blue);
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .nav-bar a:hover { background: rgba(0,212,255,0.15); }
+
+    /* 今日のセッション統計 */
+    .today-stats {
+      background: var(--surface);
+      border: 1px solid var(--primary-blue);
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .stat-item { display: flex; flex-direction: column; align-items: center; }
+    .stat-num { font-size: 1.4rem; font-weight: bold; color: var(--accent-cyan); }
+    .stat-num.wrong { color: #ff6666; }
+
+    /* フィルターバー */
+    .filter-section {
+      background-color: var(--surface);
+      border: 1px solid var(--primary-blue);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 30px;
+    }
+
+    .filter-group { margin-bottom: 15px; }
+    .filter-group:last-child { margin-bottom: 0; }
+
+    .filter-title {
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .filter-btn {
+      background-color: var(--surface2);
+      color: var(--text-dim);
+      border: 1px solid var(--text-dim);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      background-color: rgba(0, 212, 255, 0.1);
+      color: var(--text);
+      border-color: var(--primary-blue);
+    }
+
+    .filter-btn.active {
+      background-color: var(--primary-blue);
+      color: var(--dark-bg);
+      border-color: var(--primary-blue);
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+    }
+
+    /* 科目セクション */
+    .subject-section { margin-bottom: 40px; }
+
+    .section-title {
+      font-size: 1.4rem;
+      color: var(--primary-blue);
+      border-bottom: 2px solid var(--accent-purple);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .year-group { margin-bottom: 15px; }
+
+    .theme-details {
+      background-color: var(--surface);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .theme-summary {
+      padding: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      color: var(--text);
+      background-color: var(--surface2);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .theme-summary::-webkit-details-marker { display: none; }
+    .theme-summary::after { content: '▼'; color: var(--primary-blue); font-size: 0.8rem; }
+    .theme-details[open] .theme-summary::after { content: '▲'; }
+    .theme-details[open] .theme-summary { border-bottom: 1px solid rgba(0, 212, 255, 0.3); }
+
+    .theme-content { padding: 20px; }
+
+    /* 問題カード */
+    .question-card {
+      background-color: var(--surface2);
+      border-left: 4px solid var(--accent-cyan);
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: border-left-color 0.4s;
+    }
+    .question-card:last-child { margin-bottom: 0; }
+
+    /* 正解済み・誤答済みのカード装飾 */
+    .question-card.answered-correct { border-left-color: #00ff88; }
+    .question-card.answered-wrong   { border-left-color: #ff4444; }
+
+    .question-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+      align-items: center;
+    }
+
+    .exam-num { color: var(--accent-cyan); font-weight: bold; }
+
+    /* 回答済みバッジ */
+    .answered-badge {
+      font-size: 0.78rem;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    .answered-badge.correct { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
+    .answered-badge.wrong   { background: rgba(255,68,68,0.15);  color: #ff6666; border: 1px solid #ff4444; }
+
+    .question-body { margin-bottom: 10px; }
+
+    /* ============================================================
+       選択肢ボタン（核心部分）
+    ============================================================ */
+    .options-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 15px;
+      counter-reset: item;
+    }
+
+    .options-list li { margin-bottom: 0; padding: 0; }
+
+    /* 選択肢ボタン本体 */
+    .option-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background-color: rgba(0, 212, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.22);
+      color: var(--text);
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.97rem;
+      line-height: 1.5;
+      transition: all 0.18s ease;
+      counter-increment: item;
+    }
+
+    .option-btn::before {
+      content: counter(item) ". ";
+      color: var(--accent-cyan);
+      font-weight: bold;
+      margin-right: 4px;
+    }
+
+    /* 未回答ホバー */
+    .option-btn:not([disabled]):hover {
+      background-color: rgba(0, 212, 255, 0.18);
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 8px rgba(0,212,255,0.35);
+      transform: translateX(4px);
+    }
+
+    /* ✅ 正解ボタン */
+    .option-btn.correct-choice {
+      background-color: rgba(0, 255, 136, 0.18);
+      border-color: #00ff88;
+      border-width: 2px;
+      color: #00ff88;
+      font-weight: bold;
+      box-shadow: 0 0 14px rgba(0,255,136,0.4);
+      cursor: default;
+    }
+    .option-btn.correct-choice::after { content: '  ✅ 正解'; }
+
+    /* ❌ 誤答ボタン（選択したもの） */
+    .option-btn.wrong-choice {
+      background-color: rgba(255, 68, 68, 0.18);
+      border-color: #ff4444;
+      border-width: 2px;
+      color: #ff6666;
+      cursor: default;
+    }
+    .option-btn.wrong-choice::after { content: '  ❌ 選択'; }
+
+    /* 未選択・無効（回答後の残りボタン） */
+    .option-btn[disabled]:not(.correct-choice):not(.wrong-choice) {
+      opacity: 0.38;
+      cursor: default;
+    }
+
+    /* 解答パネル */
+    .answer-panel {
+      margin-top: 16px;
+      padding: 18px;
+      background-color: rgba(123, 47, 255, 0.1);
+      border: 1px solid var(--accent-purple);
+      border-radius: 8px;
+      animation: fadeIn 0.35s ease;
+    }
+    .answer-panel.hidden { display: none; }
+
+    .correct-answer {
+      color: var(--accent-cyan);
+      font-size: 1.15rem;
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .image-explanation h5 {
+      color: var(--text);
+      font-size: 1.05rem;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    /* 記録保存通知 */
+    .save-notice {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 14px;
+      border-radius: 15px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      animation: fadeIn 0.3s;
+    }
+    .save-notice.saved-correct { background: rgba(0,255,136,0.12); color: #00ff88; border: 1px solid #00ff88; }
+    .save-notice.saved-wrong   { background: rgba(255,68,68,0.12);  color: #ff6666; border: 1px solid #ff4444; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <!-- クマSVGアイコン -->
+      <svg viewBox="0 0 100 100" class="bear-logo" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="55" r="35" fill="none" stroke="var(--primary-blue)" stroke-width="3"/>
+        <circle cx="22" cy="27" r="12" fill="none" stroke="var(--primary-blue)" stroke-width="3"/>
+        <circle cx="78" cy="27" r="12" fill="none" stroke="var(--primary-blue)" stroke-width="3"/>
+        <circle cx="22" cy="27" r="7" fill="var(--accent-cyan)" opacity="0.3"/>
+        <circle cx="78" cy="27" r="7" fill="var(--accent-cyan)" opacity="0.3"/>
+        <circle cx="37" cy="50" r="4" fill="var(--accent-cyan)"/>
+        <circle cx="63" cy="50" r="4" fill="var(--accent-cyan)"/>
+        <ellipse cx="50" cy="65" rx="6" ry="4" fill="var(--primary-blue)"/>
+        <path d="M 44 70 Q 50 75 56 70" fill="none" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h1>過去問 BEAR TRAINING<br><span style="font-size: 1.2rem; color: var(--text-dim);">第一種電気工事士</span></h1>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ナビと本日のセッション統計 -->
+    <div class="nav-bar">
+      <a href="index.html">← ホームへ戻る</a>
+      <div class="today-stats">
+        <div class="stat-item">
+          <span class="stat-num" id="todayTotal">0</span>
+          <span style="font-size:0.75rem; color:var(--text-dim);">本日の解答</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="todayCorrect">0</span>
+          <span style="font-size:0.75rem; color:var(--text-dim);">正解</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num wrong" id="todayWrong">0</span>
+          <span style="font-size:0.75rem; color:var(--text-dim);">誤答（復習登録済）</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- フィルターセクション -->
+    <div class="filter-section">
+      <div class="filter-group">
+        <div class="filter-title">科目フィルター</div>
+        <div class="filter-buttons" id="subject-filters">
+          <button class="filter-btn active subject-filter" data-subject="all">全科目</button>
+          <button class="filter-btn subject-filter" data-subject="subject-1">1. 基礎理論</button>
+          <button class="filter-btn subject-filter" data-subject="subject-2">2. 配電理論</button>
+          <button class="filter-btn subject-filter" data-subject="subject-3">3. 電気応用</button>
+          <button class="filter-btn subject-filter" data-subject="subject-4">4. 機器・材料</button>
+          <button class="filter-btn subject-filter" data-subject="subject-5">5. 施工方法</button>
+          <button class="filter-btn subject-filter" data-subject="subject-6">6. 検査方法</button>
+          <button class="filter-btn subject-filter" data-subject="subject-7">7. 配線図</button>
+          <button class="filter-btn subject-filter" data-subject="subject-8">8. 発送変電</button>
+          <button class="filter-btn subject-filter" data-subject="subject-9">9. 保安法令</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-title">年度フィルター</div>
+        <div class="filter-buttons" id="year-filters">
+          <button class="filter-btn active year-filter" data-year="all">全年度</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-title">区分フィルター（令和3年以降）</div>
+        <div class="filter-buttons" id="period-filters">
+          <button class="filter-btn active period-filter" data-period="all">全区分</button>
+          <button class="filter-btn period-filter" data-period="通常">通常（H25-R2）</button>
+          <button class="filter-btn period-filter" data-period="上期午前">上期午前</button>
+          <button class="filter-btn period-filter" data-period="上期午後">上期午後</button>
+          <button class="filter-btn period-filter" data-period="下期午前">下期午前</button>
+          <button class="filter-btn period-filter" data-period="下期午後">下期午後</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- メインコンテンツ（JSで動的生成） -->
+    <div id="main-content"></div>
+  </div>
+
+  <script>
+    // ============================================================
+    // LocalStorageキー
+    // ============================================================
+    const LOG_KEY = 'denkoji1_training_log';
+
+    let セッション正解数 = 0;
+    let セッション誤答数 = 0;
+
+    // ============================================================
+    // 学習記録・復習への保存処理
+    // ============================================================
+    function 回答を記録する(qid, subjectId, subjectName, year, period, qNum, isCorrect) {
+      const 既存ログ = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+      const 既存インデックス = 既存ログ.findIndex(log => log.qid === qid);
+
+      let nextReviewDate = null;
+      if (!isCorrect) {
+        const 翌日 = new Date();
+        翌日.setDate(翌日.getDate() + 1);
+        nextReviewDate = 翌日.toISOString().split('T')[0];
+      }
+
+      const 新記録 = {
+        id: 既存インデックス >= 0 ? 既存ログ[既存インデックス].id : Date.now().toString(),
+        qid: qid,
+        subject: subjectName,
+        subjectId: subjectId,
+        year: year,
+        period: period !== '通常' ? period : '-',
+        qNum: `問${qNum}`,
+        result: isCorrect ? '○' : '×',
+        recordDate: new Date().toISOString().split('T')[0],
+        nextReviewDate: nextReviewDate,
+        source: 'past_exams'
+      };
+
+      if (既存インデックス >= 0) {
+        既存ログ[既存インデックス] = 新記録;
+      } else {
+        既存ログ.push(新記録);
+      }
+      localStorage.setItem(LOG_KEY, JSON.stringify(既存ログ));
+    }
+
+    function セッションカウンターを更新(isCorrect) {
+      if (isCorrect) { セッション正解数++; } else { セッション誤答数++; }
+      const 合計 = セッション正解数 + セッション誤答数;
+      document.getElementById('todayTotal').textContent = 合計;
+      document.getElementById('todayCorrect').textContent = セッション正解数;
+      document.getElementById('todayWrong').textContent = セッション誤答数;
+    }
+
+    // ============================================================
+    // 問題データ
+    // ============================================================
+    const subjectData = [
+      {
+        id: 'subject-1', title: '電気に関する基礎理論',
+        templates: [
+          { q: '図のような直流回路において、a-b間の合成抵抗[Ω]を求めよ。', opts: ['10', '15', '20', '25', '30'], ans: 1, exp: '直列部分と並列部分を順に計算します。' },
+          { q: '交流回路において、抵抗R=8Ω、誘導性リアクタンスXL=6Ωが直列に接続されている。この回路のインピーダンス[Ω]はいくらか。', opts: ['2', '10', '14', '48', '100'], ans: 2, exp: 'Z = √(R² + XL²) = √(8² + 6²) = 10[Ω]。' },
+          { q: '対称三相交流電源にΔ結線の負荷が接続されている。線間電圧200V、相電流10A、力率1のとき、三相電力[kW]に最も近い値はどれか。', opts: ['2.0', '3.5', '6.0', '10.0', '12.0'], ans: 3, exp: '三相電力 P = √3 × V × I × cosθ ≒ 6.0kW。' }
+        ]
+      },
+      {
+        id: 'subject-2', title: '配電理論及び配線設計',
+        templates: [
+          { q: '単相2線式配電線路において、電線1線あたりの抵抗が0.1Ω、負荷電流が20Aのとき、電圧降下[V]はいくらか。', opts: ['2', '4', '8', '10', '20'], ans: 2, exp: 'v = 2 × R × I = 2 × 0.1 × 20 = 4[V]。' },
+          { q: '三相3線式配電線路で、電力損失を正しく表す式はどれか。（I：線電流、R：1線の抵抗）', opts: ['I²R', '2I²R', '3I²R', '√3I²R', '6I²R'], ans: 3, exp: '三相3線式の電力損失 PL = 3 × I² × R。' },
+          { q: '低圧屋内配線で、5.5mm²のIV電線を3本同一管内に収めた場合の許容電流[A]はいくらか。', opts: ['24', '34', '49', '68', '100'], ans: 2, exp: '基底49A × 係数0.7 ≒ 34A。' }
+        ]
+      },
+      {
+        id: 'subject-3', title: '電気応用',
+        templates: [
+          { q: '床面積100m²の部屋を平均照度500lxにするために必要な光源の全光束[lm]はいくらか。照明率0.5、保守率0.8とする。', opts: ['50,000', '100,000', '125,000', '200,000', '250,000'], ans: 3, exp: 'F = (E × A) / (U × M) = 125,000[lm]。' },
+          { q: '消費電力2kWの電熱器を2時間使用したときの発生熱量[kJ]はいくらか。', opts: ['4,000', '7,200', '14,400', '24,000', '36,000'], ans: 3, exp: 'H = P × t = 2 × 7200 = 14,400[kJ]。' },
+          { q: '周波数60Hz、4極の三相誘導電動機の同期速度[min⁻¹]はいくらか。', opts: ['1200', '1500', '1800', '3000', '3600'], ans: 3, exp: 'Ns = 120 × f / p = 1800[min⁻¹]。' }
+        ]
+      },
+      {
+        id: 'subject-4', title: '電気機器・蓄電池・配線器具・材料工具・受電設備',
+        templates: [
+          { q: '高圧受電設備において、過電流を検知して遮断器をトリップさせる役割を持つ機器はどれか。', opts: ['ZPD', 'ZCT', 'CT', 'VT', 'DS'], ans: 3, exp: 'CT（変流器）を使用します。' },
+          { q: '鉛蓄電池の電解液として使用されるものはどれか。', opts: ['希硫酸', '水酸化カリウム水溶液', '純水', '塩酸', '硝酸'], ans: 1, exp: '鉛蓄電池は希硫酸です。' },
+          { q: 'CVケーブルの最高許容温度[℃]はどれか。', opts: ['60', '75', '90', '105', '120'], ans: 3, exp: '最高許容温度は90℃です。' }
+        ]
+      },
+      {
+        id: 'subject-5', title: '電気工事の施工方法',
+        templates: [
+          { q: '高圧ケーブルを金属管に収めて施設する場合、金属管に施す接地工事の種類はどれか。', opts: ['A種接地工事', 'B種接地工事', 'C種接地工事', 'D種接地工事', '特別A種接地工事'], ans: 1, exp: 'A種接地工事が必要です。' },
+          { q: '低圧屋内配線の合成樹脂管工事において、管の支持点間の距離の最大値[m]はどれか。', opts: ['1.0', '1.5', '2.0', '2.5', '3.0'], ans: 2, exp: '支持間隔は1.5m以下です。' },
+          { q: '架空電線路の支線の安全率はいくら以上でなければならないか。', opts: ['1.5', '2.0', '2.2', '2.5', '3.0'], ans: 4, exp: '安全率は2.5以上です。' }
+        ]
+      },
+      {
+        id: 'subject-6', title: '自家用電気工作物の検査方法',
+        templates: [
+          { q: '最大使用電圧6900Vの高圧電路の絶縁耐力試験電圧[V]はいくらか。', opts: ['6900', '8625', '10350', '13800', '15000'], ans: 3, exp: '6900 × 1.5 = 10,350V。' },
+          { q: 'アーステスタで接地抵抗を測定する場合、補助接地極は主接地極から何m程度離すのが一般的か。', opts: ['1m', '2m', '5m', '10m', '50m'], ans: 4, exp: '約10m離します。' },
+          { q: '高圧電路の絶縁抵抗測定に通常使用する絶縁抵抗計の定格測定電圧[V]はどれか。', opts: ['125', '250', '500', '1000', '2000'], ans: 4, exp: '1000Vメガーを使用します。' }
+        ]
+      },
+      {
+        id: 'subject-7', title: '配線図',
+        templates: [
+          { q: '配線図において、図記号「WP」が傍記されたコンセントの意味はどれか。', opts: ['防雨形', '防爆形', '抜け止め形', '引掛形', '接地端子付'], ans: 1, exp: 'WP = 防雨形です。' },
+          { q: '単線結線図において「ZCT」が意味する機器はどれか。', opts: ['過電流継電器', '地絡方向継電器', '零相変流器', '計器用変圧器', '避雷器'], ans: 3, exp: 'ZCT = 零相変流器。' },
+          { q: '「●」の中に「3」と書かれたスイッチが意味するものはどれか。', opts: ['3路スイッチ', '4路スイッチ', '位置表示灯内蔵スイッチ', '確認表示灯内蔵スイッチ', '調光器'], ans: 1, exp: '3路スイッチ。' }
+        ]
+      },
+      {
+        id: 'subject-8', title: '発電施設・送電施設及び変電施設の基礎特性',
+        templates: [
+          { q: '落差が大きく流量が少ない場所に適した水車はどれか。', opts: ['フランシス水車', 'ペルトン水車', 'カプラン水車', 'プロペラ水車', '斜流水車'], ans: 2, exp: 'ペルトン水車です。' },
+          { q: 'ガスタービンと汽力発電を組み合わせた発電方式を何というか。', opts: ['ランキンサイクル', 'ブレイトンサイクル', 'コンバインドサイクル', '再生サイクル', '再熱サイクル'], ans: 3, exp: 'コンバインドサイクル発電です。' },
+          { q: '架空送電線路のコロナ放電防止策として最も適切なものはどれか。', opts: ['電線を細くする', '多導体を採用する', 'がいし数を減らす', '鉄塔を高くする', '線間距離を狭くする'], ans: 2, exp: '多導体を採用します。' }
+        ]
+      },
+      {
+        id: 'subject-9', title: '一般用電気工作物及び自家用電気工作物の保安',
+        templates: [
+          { q: '第一種電気工事士でなければ従事できない作業はどれか。', opts: ['一般用電気工作物の配線工事', '500kW未満需要設備の低圧部分の工事', '500kW未満需要設備の高圧部分の電線接続作業', '36V以下の小勢力回路の配線', 'ヒューズの取替え'], ans: 3, exp: '500kW未満の高圧部分の作業です。' },
+          { q: '自家用電気工作物の設置者が定めなければならないものはどれか。', opts: ['保安規程', '安全管理規程', '作業手順書', '電気用品安全規程', '施工計画書'], ans: 1, exp: '保安規程を定めます。' },
+          { q: '電気用品安全法において、特定電気用品に付されるマークはどれか。', opts: ['丸型PSEマーク', 'ひし形PSEマーク', 'JISマーク', 'SGマーク', 'CEマーク'], ans: 2, exp: 'ひし形PSEマークです。' }
+        ]
+      }
+    ];
+
+    const 科目名マップ = {};
+    subjectData.forEach(s => { 科目名マップ[s.id] = s.title; });
+
+    const singleYears = ["H25", "H26", "H27", "H28", "H29", "H30", "R1", "R2"];
+    const multiYears = ["R3", "R4", "R5", "R6", "R7", "R8"];
+    const multiPeriods = ["上期午前", "上期午後", "下期午前", "下期午後"];
+
+    const yearFiltersContainer = document.getElementById('year-filters');
+    [...singleYears, ...multiYears].forEach(year => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn year-filter';
+      btn.dataset.year = year;
+      btn.textContent = year;
+      yearFiltersContainer.appendChild(btn);
+    });
+
+    function getSeededIndex(seedStr, max) {
+      let hash = 0;
+      for (let i = 0; i < seedStr.length; i++) {
+        hash = seedStr.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return Math.abs(hash) % max;
+    }
+
+    function getDifficulty(seedStr) {
+      const val = getSeededIndex(seedStr + 'diff', 3) + 1;
+      let stars = '';
+      for (let i = 1; i <= 3; i++) { stars += i <= val ? '★' : '☆'; }
+      return stars;
+    }
+
+    window.選択肢を選ぶ = function(clickedBtn, clickedIdx, correctIdx, qid, subjectId, year, period, qNum) {
+      const カード = clickedBtn.closest('.question-card');
+      if (カード.dataset.answered === 'true') return;
+      カード.dataset.answered = 'true';
+      const 正解フラグ = (clickedIdx === correctIdx);
+      const 全ボタン = カード.querySelectorAll('.option-btn');
+      全ボタン.forEach((btn, idx) => {
+        btn.disabled = true;
+        const btnIdx = idx + 1;
+        if (btnIdx === correctIdx) {
+          btn.classList.add('correct-choice');
+        } else if (btnIdx === clickedIdx && !正解フラグ) {
+          btn.classList.add('wrong-choice');
+        }
+      });
+      const 解答パネル = カード.querySelector('.answer-panel');
+      if (解答パネル) 解答パネル.classList.remove('hidden');
+      カード.classList.add(正解フラグ ? 'answered-correct' : 'answered-wrong');
+      const ヘッダー = カード.querySelector('.question-header');
+      const バッジ = document.createElement('span');
+      バッジ.className = `answered-badge ${正解フラグ ? 'correct' : 'wrong'}`;
+      バッジ.textContent = 正解フラグ ? '✅ 正解' : '❌ 誤答';
+      ヘッダー.appendChild(バッジ);
+      if (解答パネル) {
+        const 通知 = document.createElement('div');
+        通知.className = `save-notice ${正解フラグ ? 'saved-correct' : 'saved-wrong'}`;
+        通知.textContent = 正解フラグ ? '📝 学習記録に正解を保存しました' : '📝 学習記録に保存 ＆ 復習登録しました';
+        解答パネル.appendChild(通知);
+      }
+      回答を記録する(qid, subjectId, 科目名マップ[subjectId] || subjectId, year, period, qNum, 正解フラグ);
+      セッションカウンターを更新(正解フラグ);
+    };
+
+    const mainContent = document.getElementById('main-content');
+    let htmlContent = '';
+    subjectData.forEach(subject => {
+      htmlContent += `<section class="subject-section" data-subject="${subject.id}"><h2 class="section-title">【科目${subject.id.split('-')[1]}】${subject.title}</h2>`;
+      singleYears.forEach(year => { htmlContent += generateYearGroupHTML(subject, year, '通常'); });
+      multiYears.forEach(year => { multiPeriods.forEach(period => { htmlContent += generateYearGroupHTML(subject, year, period); }); });
+      htmlContent += `</section>`;
+    });
+    mainContent.innerHTML = htmlContent;
+
+    function generateYearGroupHTML(subject, year, period) {
+      let groupHtml = `<div class="year-group" data-year="${year}" data-period="${period}"><details class="theme-details"><summary class="theme-summary">${year}年 ${period !== '通常' ? period + ' - ' : '- '}${subject.title}</summary><div class="theme-content">`;
+      for (let i = 1; i <= 3; i++) {
+        const seed = `${subject.id}-${year}-${period}-${i}`;
+        const tmpl = subject.templates[getSeededIndex(seed, subject.templates.length)];
+        let optionsHtml = '<ul class="options-list">';
+        tmpl.opts.forEach((opt, idx) => {
+          const choiceIdx = idx + 1;
+          optionsHtml += `<li><button class="option-btn" onclick="選択肢を選ぶ(this, ${choiceIdx}, ${tmpl.ans}, '${seed}', '${subject.id}', '${year}', '${period}', ${i})">${opt}</button></li>`;
+        });
+        optionsHtml += '</ul>';
+        groupHtml += `<div class="question-card" data-subject="${subject.id}" data-year="${year}" data-period="${period}" data-qid="${seed}" data-answered="false"><div class="question-header"><span class="exam-year">${year}年</span><span class="exam-period">（${period}）</span><span class="exam-num">問 ${i}</span><span class="exam-level">難易度: <span style="color:var(--accent-cyan)">${getDifficulty(seed)}</span></span></div><div class="question-body"><p><strong>【TRAINING】</strong><br>${tmpl.q}</p>${optionsHtml}</div><div class="answer-panel hidden"><h4 class="correct-answer">正解：(${tmpl.ans}) ${tmpl.opts[tmpl.ans - 1]}</h4><div class="image-explanation"><h5>🐻 クマ先生の解説！</h5><p>${tmpl.exp}</p></div></div></div>`;
+      }
+      groupHtml += `</div></details></div>`;
+      return groupHtml;
+    }
+
+    function applyFilters() {
+      const activeSubject = document.querySelector('.subject-filter.active').dataset.subject;
+      const activeYear = document.querySelector('.year-filter.active').dataset.year;
+      const activePeriod = document.querySelector('.period-filter.active').dataset.period;
+      document.querySelectorAll('.subject-section').forEach(s => { s.style.display = (activeSubject === 'all' || s.dataset.subject === activeSubject) ? '' : 'none'; });
+      document.querySelectorAll('.year-group').forEach(g => {
+        const yOk = activeYear === 'all' || g.dataset.year === activeYear;
+        const pOk = activePeriod === 'all' || g.dataset.period === activePeriod;
+        g.style.display = (yOk && pOk) ? '' : 'none';
+      });
+    }
+
+    ['subject', 'year', 'period'].forEach(t => {
+      document.querySelectorAll(`.${t}-filter`).forEach(b => {
+        b.addEventListener('click', e => {
+          document.querySelectorAll(`.${t}-filter`).forEach(x => x.classList.remove('active'));
+          e.target.classList.add('active');
+          applyFilters();
+        });
+      });
+    });
+
+    (function 既回答状態を復元する() {
+      const logs = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+      const map = {};
+      logs.forEach(l => { if (l.qid) map[l.qid] = l.result; });
+      document.querySelectorAll('.question-card[data-qid]').forEach(c => {
+        if (!map[c.dataset.qid]) return;
+        const correct = (map[c.dataset.qid] === '○');
+        c.dataset.answered = 'true';
+        c.classList.add(correct ? 'answered-correct' : 'answered-wrong');
+        const h = c.querySelector('.question-header');
+        const b = document.createElement('span');
+        b.className = `answered-badge ${correct ? 'correct' : 'wrong'}`;
+        b.textContent = correct ? '✅ 正解済' : '❌ 誤答済';
+        h.appendChild(b);
+        c.querySelectorAll('.option-btn').forEach(btn => { btn.disabled = true; });
+      });
+    })();
+  </script>
+</body>
+</html>

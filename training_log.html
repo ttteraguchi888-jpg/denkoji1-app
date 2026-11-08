@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学習記録 v4 かんたん入力 - 第一種電気工事士 Bear Sync</title>
+<style>
+/* ============================================================
+   BABYMETAL風 漆黒 × 鮮血の真紅 テーマ
+============================================================ */
+:root{
+  --bk:#050505;              /* 背景の漆黒 */
+  --s1:#0e0e0e;              /* カード面 */
+  --s2:#171717;              /* 入力面 */
+  --rd:#e60012;              /* 鮮血の真紅 */
+  --rd2:#ff2a3d;             /* 明るい赤（ホバー） */
+  --rdd:#2a0006;             /* 暗い赤 */
+  --gl:rgba(230,0,18,.55);   /* 赤い発光 */
+  --gd:#d4af37;              /* 金（アクセント） */
+  --tx:#f2f2f2;              /* 文字色 */
+  --td:#9a9a9a;              /* 薄い文字色 */
+  --br:#3a0a10;              /* 枠線 */
+  --ok:#ececec;              /* ○ 正解の色（白） */
+  --hf:#ffae00;              /* △ まぐれの色（琥珀） */
+  --ng:#ff2a3d;              /* × 不正解の色（赤） */
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:radial-gradient(ellipse at top, #2a0006 0%, #050505 55%) fixed, var(--bk);
+  color:var(--tx);font-family:"Segoe UI","Meiryo",sans-serif;font-size:15px;min-height:100vh;
+}
+button{font-family:inherit;}
+header{
+  background:linear-gradient(90deg,#000 0%,#1a0004 50%,#000 100%);
+  padding:10px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:2px solid var(--rd);box-shadow:0 0 18px var(--gl);
+}
+.bear{width:44px;height:44px;}
+header h1{font-size:1.25rem;letter-spacing:2px;text-shadow:0 0 8px var(--rd);}
+header h1 small{display:block;font-size:.7rem;color:var(--gd);letter-spacing:3px;}
+.hlink{margin-left:auto;color:var(--tx);border:1px solid var(--rd);padding:6px 14px;border-radius:4px;text-decoration:none;font-size:.85rem;}
+.hlink:hover{background:var(--rd);}
+.wrap{max-width:1000px;margin:16px auto;padding:0 12px 120px;}
+
+/* ===== タブ ===== */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;}
+.tab{
+  position:relative;padding:12px 6px;text-align:center;cursor:pointer;user-select:none;
+  background:var(--s1);border:1px solid var(--br);border-radius:8px;color:var(--td);font-weight:bold;font-size:.92rem;
+}
+.tab.on{background:linear-gradient(180deg,#3a0008,#120002);color:#fff;border-color:var(--rd);box-shadow:0 0 12px var(--gl);}
+.badge{position:absolute;top:-7px;right:-4px;background:var(--rd);color:#fff;border-radius:10px;padding:1px 7px;font-size:.72rem;box-shadow:0 0 8px var(--rd);display:none;}
+.tc{display:none;}
+.tc.on{display:block;}
+
+/* ===== カード ===== */
+.card{background:rgba(14,14,14,.94);border:1px solid var(--br);border-radius:10px;padding:16px;margin-bottom:14px;}
+.card h2{font-size:1rem;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:8px;letter-spacing:1px;}
+.card h2::before{content:"";width:4px;height:16px;background:var(--rd);box-shadow:0 0 6px var(--rd);}
+.step{font-size:.8rem;color:var(--gd);font-weight:bold;margin:10px 0 6px;letter-spacing:1px;}
+.step:first-child{margin-top:0;}
+
+/* ===== チップ（選択ボタン） ===== */
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{
+  background:var(--s2);color:var(--tx);border:1px solid #333;border-radius:18px;
+  padding:8px 14px;font-size:.88rem;cursor:pointer;transition:.15s;
+}
+.chip.sm{padding:6px 11px;font-size:.84rem;}
+.chip:hover{border-color:var(--rd);}
+.chip.on{background:var(--rd);border-color:var(--rd2);color:#fff;font-weight:bold;box-shadow:0 0 10px var(--gl);}
+
+/* ===== 復習お知らせバナー ===== */
+.alert{
+  display:none;cursor:pointer;margin-bottom:14px;padding:12px 16px;border-radius:10px;
+  background:linear-gradient(90deg,#3a0008,#120002);border:2px solid var(--rd);
+  animation:pulse 1.8s infinite ease-in-out;font-weight:bold;
+}
+.alert b{color:var(--gd);font-size:1.1rem;}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px var(--gl);}50%{box-shadow:0 0 24px var(--rd);}}
+
+/* ===== 問題番号グリッド ===== */
+.setinfo{font-size:.86rem;color:var(--td);margin:4px 0 10px;line-height:1.6;}
+.setinfo b{color:#fff;}
+.qgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;}
+.qc{
+  position:relative;aspect-ratio:1/1;min-height:44px;border-radius:8px;cursor:pointer;
+  background:var(--s2);border:1px solid #2c2c2c;color:var(--td);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.12s;
+}
+.qc:hover{border-color:var(--rd);color:#fff;transform:scale(1.05);}
+.qc .qn{font-size:1rem;font-weight:bold;}
+.qc .qm{font-size:.7rem;line-height:1;min-height:.7rem;}
+.qc.ok{background:var(--ok);color:#000;border-color:#fff;}
+.qc.hf{background:var(--hf);color:#000;border-color:#ffd27a;}
+.qc.ng{background:var(--rd);color:#fff;border-color:var(--rd2);box-shadow:0 0 8px var(--gl);}
+.qc.due::after{content:"";position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--gd);box-shadow:0 0 6px var(--gd);}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.78rem;color:var(--td);margin-top:10px;}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px;}
+.qin-row{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+.qin-row input{flex:1;min-width:150px;}
+input[type=text],textarea{
+  width:100%;padding:10px 12px;background:var(--s2);color:var(--tx);
+  border:1px solid #333;border-radius:6px;font-size:.95rem;font-family:inherit;
+}
+input[type=text]:focus,textarea:focus{outline:none;border-color:var(--rd);box-shadow:0 0 8px var(--gl);}
+.btn{background:var(--rd);color:#fff;border:1px solid var(--rd2);padding:10px 18px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:.9rem;}
+.btn:hover{background:var(--rd2);box-shadow:0 0 10px var(--gl);}
+.btn.ghost{background:transparent;color:var(--tx);border-color:#555;}
+.btn.ghost:hover{border-color:var(--rd);}
+.cont{display:flex;align-items:center;gap:6px;font-size:.84rem;color:var(--td);cursor:pointer;margin-top:10px;}
+.cont input{accent-color:var(--rd);width:16px;height:16px;}
+
+/* ===== ボトムシート（記録・編集） ===== */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;}
+.ov.on{display:block;}
+.sheet{
+  position:fixed;left:50%;bottom:0;transform:translate(-50%,110%);transition:transform .22s ease-out;
+  width:min(720px,100%);max-height:92vh;overflow-y:auto;z-index:510;
+  background:linear-gradient(180deg,#1a0004 0%,#0a0a0a 30%);border:2px solid var(--rd);border-bottom:none;
+  border-radius:16px 16px 0 0;padding:16px 16px 22px;box-shadow:0 -6px 30px var(--gl);
+}
+.sheet.on{transform:translate(-50%,0);}
+.sh-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.sh-sub{font-size:.78rem;color:var(--gd);}
+.sh-title{font-size:1.35rem;font-weight:900;letter-spacing:1px;text-shadow:0 0 8px var(--rd);}
+.xbtn{margin-left:auto;background:transparent;color:var(--td);border:1px solid #444;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;flex-shrink:0;}
+.xbtn:hover{color:#fff;border-color:var(--rd);}
+.notice{display:none;background:rgba(212,175,55,.1);border:1px solid var(--gd);color:#f3dc8b;border-radius:8px;padding:9px 12px;font-size:.85rem;margin-bottom:10px;line-height:1.5;}
+.imp{background:var(--s2);color:var(--td);border:1px solid #444;border-radius:18px;padding:7px 14px;cursor:pointer;font-size:.88rem;margin-bottom:8px;}
+.imp.on{background:rgba(212,175,55,.18);color:var(--gd);border-color:var(--gd);font-weight:bold;}
+details{margin:10px 0;background:rgba(0,0,0,.4);border:1px solid var(--br);border-radius:8px;padding:8px 12px;}
+summary{cursor:pointer;font-size:.88rem;color:var(--tx);font-weight:bold;padding:2px 0;}
+.dlabel{font-size:.84rem;color:var(--td);margin:10px 0 6px;}
+.dlabel b{color:#fff;}
+.rlabel{font-size:.82rem;color:var(--td);margin:12px 0 6px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.kbd{color:var(--gd);}
+.rbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.rbtn{
+  border-radius:12px;padding:14px 4px;cursor:pointer;font-weight:bold;
+  display:flex;flex-direction:column;align-items:center;gap:2px;transition:.12s;border:2px solid;
+}
+.rbtn b{font-size:2rem;line-height:1;}
+.rbtn span{font-size:.85rem;}
+.rbtn:active{transform:scale(.96);}
+.rbtn.ok{background:#1b1b1b;color:var(--ok);border-color:var(--ok);}
+.rbtn.ok:hover{background:var(--ok);color:#000;}
+.rbtn.hf{background:#1b1200;color:var(--hf);border-color:var(--hf);}
+.rbtn.hf:hover{background:var(--hf);color:#000;}
+.rbtn.ng{background:#200004;color:var(--ng);border-color:var(--rd);}
+.rbtn.ng:hover{background:var(--rd);color:#fff;box-shadow:0 0 14px var(--gl);}
+.keep{display:none;width:100%;margin-top:8px;background:transparent;color:var(--tx);border:1px dashed #666;border-radius:8px;padding:10px;cursor:pointer;font-size:.88rem;}
+.keep:hover{border-color:var(--gd);color:var(--gd);}
+.del{display:none;margin-top:12px;background:transparent;color:#ff6677;border:1px solid #663;border-color:#5a1018;border-radius:6px;padding:7px 12px;cursor:pointer;font-size:.82rem;}
+.del:hover{background:#3a0008;}
+
+/* ===== カレンダー ===== */
+.calov{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;display:none;align-items:center;justify-content:center;padding:12px;}
+.calov.on{display:flex;}
+.cal{width:min(360px,100%);background:#0b0b0b;border:2px solid var(--rd);border-radius:12px;padding:14px;box-shadow:0 0 30px var(--gl);}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-h b{font-size:1.1rem;letter-spacing:1px;}
+.cal-nav{background:var(--s2);color:#fff;border:1px solid var(--rd);border-radius:6px;width:40px;height:34px;cursor:pointer;font-size:1.1rem;}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cw{text-align:center;font-size:.75rem;color:var(--td);padding:4px 0;}
+.cw.sun{color:#ff6677;} .cw.sat{color:#88aaff;}
+.cd{aspect-ratio:1/1;background:var(--s2);color:#fff;border:1px solid #2a2a2a;border-radius:6px;cursor:pointer;font-size:.92rem;}
+.cd:hover{border-color:var(--rd);}
+.cd.past{color:#666;}
+.cd.td{border-color:var(--gd);color:var(--gd);font-weight:bold;}
+.cd.sel{background:var(--rd);color:#fff;border-color:var(--rd2);box-shadow:0 0 10px var(--gl);font-weight:bold;}
+.cal-f{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;}
+
+/* ===== 復習カード ===== */
+.rvsum{font-size:.9rem;color:var(--td);margin-bottom:12px;}
+.rvsum b{color:#fff;font-size:1.05rem;}
+.rvc{background:var(--s2);border:1px solid #2c2c2c;border-left:4px solid var(--gd);border-radius:8px;padding:12px;margin-bottom:10px;}
+.rvc.over{border-left-color:var(--rd);background:linear-gradient(90deg,#1e0005,#141414);}
+.rvh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.rvh b{font-size:1.02rem;}
+.rvs{font-size:.8rem;color:var(--td);margin-top:4px;}
+.rvm{font-size:.84rem;color:#ddd;margin-top:6px;background:rgba(0,0,0,.35);padding:6px 8px;border-radius:5px;white-space:pre-wrap;}
+.rva{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.ab{flex:1;min-width:80px;padding:10px 6px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:.9rem;border:1.5px solid;}
+.ab.ok{background:#1b1b1b;color:var(--ok);border-color:var(--ok);}
+.ab.hf{background:#1b1200;color:var(--hf);border-color:var(--hf);}
+.ab.ng{background:#200004;color:var(--ng);border-color:var(--rd);}
+.ab.sub{flex:0 0 auto;min-width:0;background:transparent;color:var(--td);border-color:#444;padding:10px 12px;}
+.ab:hover{filter:brightness(1.3);}
+.late{background:var(--rd);color:#fff;font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:bold;}
+.tday{background:var(--gd);color:#000;font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:bold;}
+.empty{text-align:center;color:var(--td);padding:22px 10px;line-height:1.8;}
+.empty .big{font-size:2.4rem;}
+
+/* ===== 結果バッジ ===== */
+.rb{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:6px;font-weight:900;font-size:1.05rem;flex-shrink:0;}
+.rb.ok{background:var(--ok);color:#000;}
+.rb.hf{background:var(--hf);color:#000;}
+.rb.ng{background:var(--rd);color:#fff;}
+
+/* ===== 履歴リスト ===== */
+.hbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+.hbar input{flex:1;min-width:200px;}
+.hcount{font-size:.82rem;color:var(--td);margin:8px 0;}
+.hrow{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #242424;border-radius:8px;margin-bottom:6px;background:var(--s2);cursor:pointer;}
+.hrow:hover{border-color:var(--rd);}
+.hrow.over{border-color:#5a1018;background:linear-gradient(90deg,#1e0005,#141414);}
+.hmain{flex:1;min-width:0;}
+.ht{font-size:.95rem;}
+.hs{font-size:.78rem;color:var(--td);margin-left:6px;}
+.hd{font-size:.78rem;color:var(--td);margin-top:3px;}
+.hd .w{color:#ff6677;font-weight:bold;}
+.hd .t{color:var(--gd);font-weight:bold;}
+.hm{font-size:.78rem;color:#bbb;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hgo{color:var(--td);font-size:1.1rem;}
+
+/* ===== 進捗 ===== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.st{background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:10px;text-align:center;}
+.st b{display:block;font-size:1.5rem;color:#fff;text-shadow:0 0 8px var(--rd);}
+.st span{font-size:.76rem;color:var(--td);}
+.sr{margin-bottom:12px;cursor:pointer;}
+.sr-h{display:flex;justify-content:space-between;font-size:.84rem;margin-bottom:4px;}
+.sr-h em{font-style:normal;color:var(--gd);font-weight:bold;}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:#1d1d1d;border:1px solid #2a2a2a;}
+.bar i{display:block;height:100%;}
+
+/* ===== トースト ===== */
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);opacity:0;transition:.25s;z-index:700;
+  background:#0b0b0b;border:1px solid var(--rd);color:#fff;padding:12px 18px;border-radius:10px;
+  box-shadow:0 0 18px var(--gl);font-size:.9rem;max-width:92vw;pointer-events:none;
+}
+.toast.on{transform:translate(-50%,0);opacity:1;}
+footer{text-align:center;padding:16px;color:var(--td);font-size:.8rem;border-top:1px solid var(--br);}
+
+@media (max-width:640px){
+  .qgrid{grid-template-columns:repeat(5,1fr);}
+  .tab{font-size:.8rem;padding:10px 2px;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  header h1{font-size:1.05rem;}
+}
+</style>
+</head>
+<body>
+<header>
+<svg viewBox="0 0 100 100" class="bear" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="55" r="35" fill="none" stroke="#e60012" stroke-width="3"/>
+  <circle cx="22" cy="27" r="12" fill="none" stroke="#e60012" stroke-width="3"/>
+  <circle cx="78" cy="27" r="12" fill="none" stroke="#e60012" stroke-width="3"/>
+  <circle cx="37" cy="50" r="4" fill="#fff"/>
+  <circle cx="63" cy="50" r="4" fill="#fff"/>
+  <ellipse cx="50" cy="65" rx="6" ry="4" fill="#e60012"/>
+  <path d="M44 70 Q50 75 56 70" fill="none" stroke="#e60012" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<h1>学習記録<small>BEAR SYNC ／ かんたん入力</small></h1>
+<a href="index.html" class="hlink">ホームへ</a>
+</header>
+
+<div class="wrap">
+<div class="tabs">
+  <div class="tab on" data-tab="0">⚡ かんたん記録</div>
+  <div class="tab" data-tab="1">🔥 今日の復習<span class="badge" id="rvBadge">0</span></div>
+  <div class="tab" data-tab="2">📚 履歴・検索</div>
+  <div class="tab" data-tab="3">📊 進捗</div>
+</div>
+
+<!-- ===== タブ0: かんたん記録 ===== -->
+<div class="tc on" id="tc0">
+  <div class="alert" id="rvAlert">🔥 今日の復習・予習が <b id="rvAlertN">0</b> 件あります。ここをタップして復習する ▶</div>
+
+  <div class="card">
+    <h2>① 科目・年度を選ぶ（前回の選択を記憶します）</h2>
+    <div class="step">科目</div>
+    <div class="chips" id="subChips"></div>
+    <div class="step">年度</div>
+    <div class="chips" id="yrChips"></div>
+    <div id="prdRow">
+      <div class="step">区分</div>
+      <div class="chips" id="prdChips"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 問題番号をタップ → 結果を選ぶだけ</h2>
+    <div class="setinfo" id="setInfo"></div>
+    <div class="qgrid" id="qGrid"></div>
+    <div class="legend">
+      <span><i style="background:var(--s2);border:1px solid #444;"></i>未記録</span>
+      <span><i style="background:var(--ok);"></i>○ 正解</span>
+      <span><i style="background:var(--hf);"></i>△ まぐれ</span>
+      <span><i style="background:var(--rd);"></i>× 不正解</span>
+      <span><i style="background:var(--gd);border-radius:50%;"></i>復習日が来ている</span>
+    </div>
+    <div class="qin-row">
+      <input type="text" id="qIn" placeholder="番号を入力して Enter（例: 12、A-5）">
+      <button type="button" class="btn" id="qInBtn">開く</button>
+    </div>
+    <div class="chips" id="otherChips" style="margin-top:8px;"></div>
+    <label class="cont"><input type="checkbox" id="contChk"> 連続入力モード（保存したら次の番号を自動で開く）</label>
+  </div>
+</div>
+
+<!-- ===== タブ1: 今日の復習 ===== -->
+<div class="tc" id="tc1">
+  <div class="card">
+    <h2>🔥 今日の復習（分散学習）</h2>
+    <div class="rvsum" id="rvSum"></div>
+    <div id="rvList"></div>
+  </div>
+  <div class="card">
+    <h2>📖 今日の予習（期限切れを含む）</h2>
+    <div id="pvList"></div>
+  </div>
+</div>
+
+<!-- ===== タブ2: 履歴・検索 ===== -->
+<div class="tc" id="tc2">
+  <div class="card">
+    <h2>📚 履歴・検索（行をタップで編集）</h2>
+    <div class="hbar">
+      <input type="text" id="hq" placeholder="例: R5 12 ／ 基礎理論 ／ 上期午前 ／ メモの言葉">
+      <button type="button" class="btn ghost" id="bCSV">CSV出力</button>
+    </div>
+    <div class="chips" id="hChips"></div>
+    <div class="hcount" id="hCount"></div>
+    <div id="hList"></div>
+  </div>
+</div>
+
+<!-- ===== タブ3: 進捗 ===== -->
+<div class="tc" id="tc3">
+  <div class="card">
+    <h2>📊 学習状況</h2>
+    <div class="stats" id="stats"></div>
+    <div id="dash"></div>
+    <div style="font-size:.78rem;color:var(--td);margin-top:6px;">※科目名をタップすると、その科目の履歴を表示します</div>
+  </div>
+</div>
+</div>
+<footer>Bear Sync - 第一種電気工事士 合格への道</footer>
+
+<!-- ===== ボトムシート ===== -->
+<div class="ov" id="ov"></div>
+<div class="sheet" id="sheet">
+  <div class="sh-head">
+    <div>
+      <div class="sh-sub" id="shSub"></div>
+      <div class="sh-title" id="shTitle"></div>
+    </div>
+    <button type="button" class="xbtn" id="shX" title="閉じる (Esc)">✕</button>
+  </div>
+  <div class="notice" id="shNotice"></div>
+  <button type="button" class="imp" id="shImp">☆ 重要マーク</button>
+  <textarea id="shMemo" rows="2" placeholder="メモ（任意）：間違えた理由・覚えるポイントなど"></textarea>
+  <details id="shDet">
+    <summary>📅 予習日・復習日を指定する（任意・普段は自動でOK）</summary>
+    <div class="dlabel">予習予定日：<b id="pdLb"></b></div>
+    <div class="chips" id="pdChips"></div>
+    <div class="dlabel">次回復習日：<b id="rdLb"></b></div>
+    <div class="chips" id="rdChips"></div>
+  </details>
+  <div class="rlabel"><span>▼ 結果をタップすると即保存</span><span class="kbd">キーボード: 1=○ 2=△ 3=× ／ Esc=閉じる</span></div>
+  <div class="rbtns">
+    <button type="button" class="rbtn ok" data-r="○"><b>○</b><span>正解</span></button>
+    <button type="button" class="rbtn hf" data-r="△"><b>△</b><span>まぐれ</span></button>
+    <button type="button" class="rbtn ng" data-r="×"><b>×</b><span>不正解</span></button>
+  </div>
+  <button type="button" class="keep" id="shKeep">💾 結果は変えずに保存（メモ・日付・重要マークだけ更新）</button>
+  <button type="button" class="del" id="shDel">🗑 この記録を削除</button>
+</div>
+
+<!-- ===== カレンダー ===== -->
+<div class="calov" id="calOv">
+  <div class="cal">
+    <div class="cal-h">
+      <button type="button" class="cal-nav" id="calPrev">‹</button>
+      <b id="calT"></b>
+      <button type="button" class="cal-nav" id="calNext">›</button>
+    </div>
+    <div class="cal-g" id="calG"></div>
+    <div class="cal-f">
+      <button type="button" class="btn ghost" id="calToday">今日</button>
+      <button type="button" class="btn ghost" id="calClose">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   定数
+============================================================ */
+var KEY     = 'denkoji1_training_log'; /* 学習記録の保存キー（フラッシュカードと共通） */
+var SEL_KEY = 'denkoji1_quick_sel';    /* かんたん記録の前回選択の保存キー */
+var OLD     = ['H25','H26','H27','H28','H29','H30','R1','R2']; /* 区分がない年度 */
+var YEARS   = ['R8','R7','R6','R5','R4','R3','R2','R1','H30','H29','H28','H27','H26','H25']; /* 年度一覧 */
+var PERIODS = ['上期午前','上期午後','下期午前','下期午後']; /* R3以降の区分 */
+var SUBS = [ /* 科目一覧（f=正式名, s=短縮名） */
+  {f:'電気に関する基礎理論', s:'① 基礎理論'},
+  {f:'配電理論及び配線設計', s:'② 配電・配線設計'},
+  {f:'電気応用', s:'③ 電気応用'},
+  {f:'電気機器・蓄電池・配線器具・電気工事用の材料及び工具並びに受電設備', s:'④ 機器・材料・工具'},
+  {f:'電気工事の施工方法', s:'⑤ 施工方法'},
+  {f:'自家用電気工作物の検査方法', s:'⑥ 検査方法'},
+  {f:'配線図', s:'⑦ 配線図'},
+  {f:'発電施設・送電施設及び変電施設の基礎的な構造及び特性', s:'⑧ 発電・送電・変電'},
+  {f:'一般用電気工作物及び自家用電気工作物の保安', s:'⑨ 保安・法令'}
+];
+var SRS_DAYS = [1, 3, 7, 14, 30, 90]; /* 分散学習の間隔（フラッシュカードと共通） */
+var QMAX = 50;                         /* 問題番号の最大値 */
+var WD = ['日','月','火','水','木','金','土']; /* 曜日表記 */
+
+/* ============================================================
+   共通ユーティリティ
+============================================================ */
+function $(id){ return document.getElementById(id); }
+function load(){
+  try{ var d = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(d) ? d : []; }
+  catch(e){ return []; }
+}
+function store(d){ localStorage.setItem(KEY, JSON.stringify(d)); }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function toYMD(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function today(){ return toYMD(new Date()); }
+function addDays(n){ var d = new Date(); d.setDate(d.getDate() + n); return toYMD(d); }
+function addMonths(n){ var d = new Date(); d.setMonth(d.getMonth() + n); return toYMD(d); }
+function parseYMD(s){ var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+/* 今日から見た日数差（未来=正、過去=負） */
+function diffDays(s){ return Math.round((parseYMD(s) - parseYMD(today())) / 86400000); }
+/* YYYY-MM-DD → 「10月16日(金)」 */
+function jpDate(s){
+  if(!s) return 'なし';
+  var d = parseYMD(s);
+  var str = (d.getMonth()+1) + '月' + d.getDate() + '日(' + WD[d.getDay()] + ')';
+  return d.getFullYear() !== new Date().getFullYear() ? d.getFullYear() + '年' + str : str;
+}
+/* 相対表現「今日／明日／3日後／2日超過」 */
+function relLabel(s){
+  var n = diffDays(s);
+  if(n === 0) return '今日';
+  if(n === 1) return '明日';
+  return n > 0 ? n + '日後' : (-n) + '日超過';
+}
+/* 全角→半角＋小文字化（検索用） */
+function normText(s){
+  return String(s || '').replace(/[０-９Ａ-Ｚａ-ｚ]/g, function(c){
+    return String.fromCharCode(c.charCodeAt(0) - 0xFEE0);
+  }).toLowerCase().trim();
+}
+/* 問題番号の表記ゆれを統一（「12」「１２」「問012」→「問12」） */
+function normQ(q){
+  var s = normText(q).replace(/\s+/g, '');
+  if(!s) return '';
+  if(/^[0-9]+$/.test(s)) return '問' + parseInt(s, 10);
+  var m = s.match(/^問0*([0-9]+)$/);
+  if(m) return '問' + parseInt(m[1], 10);
+  return s.toUpperCase();
+}
+function subShort(f){
+  for(var i = 0; i < SUBS.length; i++) if(SUBS[i].f === f) return SUBS[i].s;
+  return f;
+}
+function isOld(y){ return OLD.indexOf(y) >= 0; }
+function setLabel(y, p){ return y + ((p && p !== '-') ? ' ' + p : ''); }
+function yearKanji(y){
+  if(!y) return '';
+  if(y[0] === 'R') return '令和' + (y === 'R1' ? '元' : y.slice(1)) + '年';
+  return '平成' + y.slice(1) + '年';
+}
+function rc(r){ return r === '○' ? 'ok' : r === '△' ? 'hf' : 'ng'; } /* 結果→CSSクラス */
+/* 同じ問題かどうか（科目・年度・区分・番号が一致） */
+function sameQ(l, sub, yr, prd, q){
+  return l.subject === sub && l.year === yr && (l.period || '-') === (prd || '-') && normQ(l.qNum) === q;
+}
+/* トースト通知 */
+var toastTimer = null; /* トースト消去タイマー */
+function toast(msg){
+  var t = $('toast');
+  t.innerHTML = msg;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('on'); }, 2800);
+}
+
+/* ============================================================
+   分散学習（SRS）ロジック
+============================================================ */
+/* 初回記録時の自動復習日：×→明日 / △→3日後 / ○→なし（⭐重要は1週間後） */
+function autoReview(result, imp){
+  if(result === '×') return {lv:0, date:addDays(1)};
+  if(result === '△') return {lv:1, date:addDays(3)};
+  if(imp)            return {lv:2, date:addDays(7)};
+  return {lv:0, date:null};
+}
+/* 復習時の次回日：○→レベルUP / △→同じ間隔 / ×→レベル0で明日 */
+function nextReview(lv, result){
+  if(result === '×') return {lv:0, date:addDays(1)};
+  if(result === '△') return {lv:lv, date:addDays(SRS_DAYS[Math.min(lv, SRS_DAYS.length-1)])};
+  var nl = lv + 1; /* 新しいレベル */
+  if(nl >= SRS_DAYS.length) return {lv:nl, date:null, grad:true}; /* 卒業＝長期記憶に定着 */
+  return {lv:nl, date:addDays(SRS_DAYS[nl])};
+}
+
+/* ============================================================
+   かんたん記録：選択状態
+============================================================ */
+var sel = (function(){ /* 前回の科目・年度・区分・連続入力設定 */
+  try{
+    var s = JSON.parse(localStorage.getItem(SEL_KEY) || 'null');
+    if(s && s.sub && s.yr) return s;
+  }catch(e){}
+  return {sub:SUBS[0].f, yr:'R6', prd:'上期午前', cont:false};
+})();
+function saveSel(){ localStorage.setItem(SEL_KEY, JSON.stringify(sel)); }
+function curPrd(){ return isOld(sel.yr) ? '-' : (sel.prd || '上期午前'); }
+
+function renderQuick(){
+  var data = load();
+  var prd  = curPrd();
+  var td   = today();
+  var h    = '';
+
+  /* 科目チップ */
+  SUBS.forEach(function(s){
+    h += '<button type="button" class="chip' + (s.f === sel.sub ? ' on' : '') + '" data-sub="' + esc(s.f) + '" title="' + esc(s.f) + '">' + esc(s.s) + '</button>';
+  });
+  $('subChips').innerHTML = h;
+
+  /* 年度チップ */
+  h = '';
+  YEARS.forEach(function(y){
+    h += '<button type="button" class="chip sm' + (y === sel.yr ? ' on' : '') + '" data-yr="' + y + '" title="' + yearKanji(y) + '">' + y + '</button>';
+  });
+  $('yrChips').innerHTML = h;
+
+  /* 区分チップ（R3以降のみ表示） */
+  $('prdRow').style.display = isOld(sel.yr) ? 'none' : '';
+  h = '';
+  PERIODS.forEach(function(p){
+    h += '<button type="button" class="chip sm' + (p === prd ? ' on' : '') + '" data-prd="' + p + '">' + p + '</button>';
+  });
+  $('prdChips').innerHTML = h;
+
+  /* このセット（科目×年度×区分）の記録 */
+  var recs = data.filter(function(l){ return l.subject === sel.sub && l.year === sel.yr && (l.period || '-') === prd; });
+  var map  = {};                         /* 番号→記録 */
+  var cnt  = {'○':0, '△':0, '×':0};     /* 結果別件数 */
+  recs.forEach(function(l){ map[normQ(l.qNum)] = l; cnt[l.result] = (cnt[l.result] || 0) + 1; });
+
+  /* 問題番号グリッド */
+  h = '';
+  for(var i = 1; i <= QMAX; i++){
+    var q = '問' + i, r = map[q], cls = 'qc', mark = '';
+    if(r){
+      cls += ' ' + rc(r.result);
+      mark = r.result + (r.important ? '⭐' : '');
+      if(r.nextReviewDate && r.nextReviewDate <= td) cls += ' due';
+    }
+    h += '<button type="button" class="' + cls + '" data-q="' + q + '" title="' + q + '"><span class="qn">' + i + '</span><span class="qm">' + mark + '</span></button>';
+  }
+  $('qGrid').innerHTML = h;
+
+  /* 1〜50以外の番号（A-5など）の記録 */
+  var others = recs.filter(function(l){ var n = normQ(l.qNum).match(/^問(\d+)$/); return !(n && +n[1] >= 1 && +n[1] <= QMAX); });
+  $('otherChips').innerHTML = others.length
+    ? '<span style="font-size:.8rem;color:var(--td);align-self:center;">その他の番号：</span>' + others.map(function(l){
+        return '<button type="button" class="chip sm" data-id="' + l.id + '">' + l.result + ' ' + esc(l.qNum) + '</button>';
+      }).join('')
+    : '';
+
+  $('setInfo').innerHTML = '<b>' + esc(setLabel(sel.yr, prd)) + '</b>（' + yearKanji(sel.yr) + '） ／ <b>' + esc(subShort(sel.sub)) + '</b>'
+    + ' … 記録済み <b>' + recs.length + '</b> 問（○' + cnt['○'] + ' △' + cnt['△'] + ' ×' + cnt['×'] + '）';
+  $('contChk').checked = !!sel.cont;
+}
+
+/* チップ・グリッドのクリック（イベント委譲） */
+$('subChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-sub]'); if(!b) return;
+  sel.sub = b.dataset.sub; saveSel(); renderQuick();
+});
+$('yrChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-yr]'); if(!b) return;
+  sel.yr = b.dataset.yr; saveSel(); renderQuick();
+});
+$('prdChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-prd]'); if(!b) return;
+  sel.prd = b.dataset.prd; saveSel(); renderQuick();
+});
+$('qGrid').addEventListener('click', function(e){
+  var b = e.target.closest('[data-q]'); if(!b) return;
+  openSheet({sub:sel.sub, yr:sel.yr, prd:curPrd(), qNum:b.dataset.q, fromGrid:true});
+});
+$('otherChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-id]'); if(!b) return;
+  openSheet({id:b.dataset.id});
+});
+function openFromInput(){
+  var q = normQ($('qIn').value);
+  if(!q){ $('qIn').focus(); return; }
+  $('qIn').value = '';
+  openSheet({sub:sel.sub, yr:sel.yr, prd:curPrd(), qNum:q, fromGrid:true});
+}
+$('qInBtn').addEventListener('click', openFromInput);
+$('qIn').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); openFromInput(); } });
+$('contChk').addEventListener('change', function(){ sel.cont = this.checked; saveSel(); });
+$('rvAlert').addEventListener('click', function(){ showTab(1); });
+
+/* ============================================================
+   ボトムシート（記録・編集を1か所に集約）
+============================================================ */
+var sh = null; /* シートの編集状態 {rec, sub, yr, prd, qNum, imp, pd, rd, fromGrid} */
+
+var PD_OPTS = [ /* 予習日の選択肢 */
+  {k:'none', t:'なし'}, {k:'d0', t:'今日'}, {k:'d1', t:'明日'}, {k:'d3', t:'3日後'},
+  {k:'d7', t:'1週間後'}, {k:'d14', t:'2週間後'}, {k:'m1', t:'1ヶ月後'}, {k:'cal', t:'📅 カレンダー'}
+];
+var RD_OPTS = [ /* 復習日の選択肢 */
+  {k:'auto', t:'🤖 自動'}, {k:'d1', t:'明日'}, {k:'d3', t:'3日後'}, {k:'d7', t:'1週間後'},
+  {k:'d14', t:'2週間後'}, {k:'m1', t:'1ヶ月後'}, {k:'m3', t:'3ヶ月後'}, {k:'none', t:'なし'}, {k:'cal', t:'📅 カレンダー'}
+];
+function optDate(k){
+  if(k[0] === 'd') return addDays(+k.slice(1));
+  if(k[0] === 'm') return addMonths(+k.slice(1));
+  return null;
+}
+function chipsHTML(opts, val){
+  /* 現在値に一致するチップを点灯（一致なしの日付ならカレンダーを点灯） */
+  var flags = opts.map(function(o){
+    if(o.k === 'none') return val === null;
+    if(o.k === 'auto') return val === 'auto';
+    if(o.k === 'cal')  return false;
+    return !!val && val !== 'auto' && optDate(o.k) === val;
+  });
+  var any = flags.some(function(f){ return f; });
+  return opts.map(function(o, i){
+    var on = flags[i] || (o.k === 'cal' && !any && !!val && val !== 'auto');
+    return '<button type="button" class="chip sm' + (on ? ' on' : '') + '" data-k="' + o.k + '">' + o.t + '</button>';
+  }).join('');
+}
+function renderDates(){
+  $('pdChips').innerHTML = chipsHTML(PD_OPTS, sh.pd);
+  $('rdChips').innerHTML = chipsHTML(RD_OPTS, sh.rd);
+  $('pdLb').textContent = sh.pd ? jpDate(sh.pd) + '（' + relLabel(sh.pd) + '）' : 'なし';
+  if(sh.rd === 'auto'){
+    var cur = (sh.rec && sh.rec.nextReviewDate) ? '／現在: ' + jpDate(sh.rec.nextReviewDate) : '';
+    $('rdLb').textContent = '自動（×→明日・△→3日後・○→なし／⭐付き○→1週間後）' + cur;
+  } else {
+    $('rdLb').textContent = sh.rd ? jpDate(sh.rd) + '（' + relLabel(sh.rd) + '）' : 'なし（復習しない）';
+  }
+}
+function renderImp(){
+  var b = $('shImp');
+  b.classList.toggle('on', sh.imp);
+  b.textContent = sh.imp ? '⭐ 重要マーク中（タップで解除）' : '☆ 重要マークを付ける';
+}
+
+function openSheet(ctx){
+  var data = load(), rec = null;
+  if(ctx.id){
+    rec = data.find(function(l){ return l.id === ctx.id; });
+    if(!rec) return;
+    ctx = {sub:rec.subject, yr:rec.year, prd:rec.period || '-', qNum:rec.qNum, fromGrid:false};
+  } else {
+    ctx.qNum = normQ(ctx.qNum);
+    rec = data.find(function(l){ return sameQ(l, ctx.sub, ctx.yr, ctx.prd, ctx.qNum); }) || null;
+  }
+  sh = {
+    rec: rec, sub: ctx.sub, yr: ctx.yr, prd: ctx.prd,
+    qNum: rec ? rec.qNum : ctx.qNum,
+    imp: rec ? !!rec.important : false,
+    pd:  rec ? (rec.previewDate || null) : null,
+    rd:  'auto',
+    fromGrid: !!ctx.fromGrid
+  };
+  $('shSub').textContent   = subShort(sh.sub) + '　' + yearKanji(sh.yr);
+  $('shTitle').textContent = setLabel(sh.yr, sh.prd) + '　' + sh.qNum;
+  var nt = $('shNotice');
+  if(rec){
+    nt.innerHTML = '⚠ この問題は <b>' + esc(rec.recordDate) + '</b> に【<b>' + esc(rec.result) + '</b>】で記録済みです。'
+      + '<br>結果をタップすると<b>上書き更新</b>されます（二重登録はされません）。';
+    nt.style.display = 'block';
+  } else {
+    nt.style.display = 'none';
+  }
+  $('shKeep').style.display = rec ? 'block' : 'none';
+  $('shDel').style.display  = rec ? 'inline-block' : 'none';
+  $('shMemo').value = rec ? (rec.memo || '') : '';
+  $('shDet').open = !!sh.pd;
+  renderImp();
+  renderDates();
+  $('ov').classList.add('on');
+  $('sheet').classList.add('on');
+  $('sheet').scrollTop = 0;
+}
+function closeSheet(){
+  $('ov').classList.remove('on');
+  $('sheet').classList.remove('on');
+  sh = null;
+}
+
+/* 保存（result=null のときは結果を変えずに保存） */
+function saveSheet(result){
+  if(!sh) return;
+  var data = load();
+  var idx  = sh.rec ? data.findIndex(function(l){ return l.id === sh.rec.id; }) : -1;
+  if(!sh.rec){
+    /* 念のため保存直前にも重複を再確認（別タブで登録された場合など） */
+    idx = data.findIndex(function(l){ return sameQ(l, sh.sub, sh.yr, sh.prd, normQ(sh.qNum)); });
+  }
+  var rec = idx >= 0 ? data[idx] : {
+    id: Date.now().toString(), subject: sh.sub, year: sh.yr, period: sh.prd, qNum: sh.qNum,
+    recordDate: today(), intervalLevel: 0, nextReviewDate: null, previewDate: null
+  };
+  if(result) rec.result = result;
+  if(!rec.result) return; /* 新規で結果未選択は保存しない */
+  rec.memo        = $('shMemo').value.trim();
+  rec.important   = sh.imp;
+  rec.previewDate = sh.pd;
+  if(sh.rd === 'auto'){
+    if(result){ var a = autoReview(result, sh.imp); rec.nextReviewDate = a.date; rec.intervalLevel = a.lv; }
+  } else {
+    rec.nextReviewDate = sh.rd;
+  }
+  if(idx >= 0){ rec.updatedDate = today(); data[idx] = rec; } else { data.push(rec); }
+  store(data);
+
+  var label = setLabel(rec.year, rec.period) + ' ' + rec.qNum;
+  toast('✅ <b>' + esc(label) + '</b> を【' + rec.result + '】で' + (idx >= 0 ? '更新' : '記録')
+    + (rec.nextReviewDate ? ' → 次の復習 ' + jpDate(rec.nextReviewDate) : ''));
+
+  /* 連続入力モード：次の番号を自動で開く */
+  var ctx = sh, m = normQ(ctx.qNum).match(/^問(\d+)$/);
+  closeSheet();
+  renderAll();
+  if(ctx.fromGrid && sel.cont && m && +m[1] < QMAX){
+    setTimeout(function(){ openSheet({sub:ctx.sub, yr:ctx.yr, prd:ctx.prd, qNum:'問' + (+m[1] + 1), fromGrid:true}); }, 260);
+  }
+}
+
+/* シート内のイベント */
+$('ov').addEventListener('click', closeSheet);
+$('shX').addEventListener('click', closeSheet);
+$('shImp').addEventListener('click', function(){ sh.imp = !sh.imp; renderImp(); });
+$('shKeep').addEventListener('click', function(){ saveSheet(null); });
+document.querySelectorAll('.rbtn').forEach(function(b){
+  b.addEventListener('click', function(){ saveSheet(b.dataset.r); });
+});
+$('shDel').addEventListener('click', function(){
+  if(!sh || !sh.rec) return;
+  if(!confirm('「' + setLabel(sh.yr, sh.prd) + ' ' + sh.qNum + '」の記録を削除しますか？')) return;
+  var id = sh.rec.id;
+  store(load().filter(function(l){ return l.id !== id; }));
+  closeSheet(); renderAll();
+  toast('🗑 記録を削除しました');
+});
+$('pdChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-k]'); if(!b) return;
+  var k = b.dataset.k;
+  if(k === 'cal'){ openCal(sh.pd, function(v){ sh.pd = v; renderDates(); }); return; }
+  sh.pd = (k === 'none') ? null : optDate(k);
+  renderDates();
+});
+$('rdChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-k]'); if(!b) return;
+  var k = b.dataset.k;
+  if(k === 'cal'){
+    var init = (sh.rd && sh.rd !== 'auto') ? sh.rd : (sh.rec && sh.rec.nextReviewDate) || null;
+    openCal(init, function(v){ sh.rd = v; renderDates(); });
+    return;
+  }
+  sh.rd = (k === 'none') ? null : (k === 'auto') ? 'auto' : optDate(k);
+  renderDates();
+});
+
+/* ============================================================
+   カレンダー（日付が未設定なら今日を選択状態で開く）
+============================================================ */
+var cal = {y:0, m:0, val:null, cb:null}; /* 表示中の年・月(0始まり)・選択日・コールバック */
+function openCal(init, cb){
+  var d = init ? parseYMD(init) : new Date();
+  cal.y = d.getFullYear(); cal.m = d.getMonth();
+  cal.val = init || today();
+  cal.cb = cb;
+  renderCal();
+  $('calOv').classList.add('on');
+}
+function closeCal(){ $('calOv').classList.remove('on'); }
+function renderCal(){
+  $('calT').textContent = cal.y + '年 ' + (cal.m + 1) + '月';
+  var first = new Date(cal.y, cal.m, 1).getDay();      /* 1日の曜日 */
+  var last  = new Date(cal.y, cal.m + 1, 0).getDate(); /* 月末日 */
+  var td = today(), h = '';
+  WD.forEach(function(w, i){ h += '<div class="cw' + (i === 0 ? ' sun' : i === 6 ? ' sat' : '') + '">' + w + '</div>'; });
+  for(var i = 0; i < first; i++) h += '<div></div>';
+  for(var d = 1; d <= last; d++){
+    var ymd = cal.y + '-' + String(cal.m + 1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    var cls = 'cd' + (ymd < td ? ' past' : '') + (ymd === td ? ' td' : '') + (ymd === cal.val ? ' sel' : '');
+    h += '<button type="button" class="' + cls + '" data-d="' + ymd + '">' + d + '</button>';
+  }
+  $('calG').innerHTML = h;
+}
+$('calG').addEventListener('click', function(e){
+  var b = e.target.closest('[data-d]'); if(!b) return;
+  var cb = cal.cb; closeCal(); if(cb) cb(b.dataset.d);
+});
+$('calPrev').addEventListener('click', function(){ cal.m--; if(cal.m < 0){ cal.m = 11; cal.y--; } renderCal(); });
+$('calNext').addEventListener('click', function(){ cal.m++; if(cal.m > 11){ cal.m = 0; cal.y++; } renderCal(); });
+$('calToday').addEventListener('click', function(){ var cb = cal.cb; closeCal(); if(cb) cb(today()); });
+$('calClose').addEventListener('click', closeCal);
+$('calOv').addEventListener('click', function(e){ if(e.target === this) closeCal(); });
+
+/* ============================================================
+   今日の復習・予習
+============================================================ */
+function isDue(l, td){ return !!l.nextReviewDate && l.nextReviewDate <= td; }
+
+function rvCard(l, kind){
+  var ds = kind === 'rv' ? l.nextReviewDate : l.previewDate;
+  var n  = diffDays(ds);
+  var tag = n < 0 ? '<span class="late">⚠ ' + (-n) + '日超過</span>' : '<span class="tday">今日</span>';
+  var info = esc(subShort(l.subject)) + ' ・ 前回【' + esc(l.result) + '】'
+    + (kind === 'rv' ? ' ・ 定着レベル ' + Math.min(l.intervalLevel || 0, SRS_DAYS.length) + '/' + SRS_DAYS.length : ' ・ 予習予定 ' + jpDate(ds));
+  return '<div class="rvc' + (n < 0 ? ' over' : '') + '" data-id="' + l.id + '" data-kind="' + kind + '">'
+    + '<div class="rvh"><span class="rb ' + rc(l.result) + '">' + esc(l.result) + '</span>'
+    + '<b>' + esc(setLabel(l.year, l.period)) + ' ' + esc(l.qNum) + '</b>' + (l.important ? '⭐' : '') + tag + '</div>'
+    + '<div class="rvs">' + info + '</div>'
+    + (l.memo ? '<div class="rvm">📝 ' + esc(l.memo) + '</div>' : '')
+    + '<div class="rva">'
+    + '<button type="button" class="ab ok" data-r="○">○ できた</button>'
+    + '<button type="button" class="ab hf" data-r="△">△ あやしい</button>'
+    + '<button type="button" class="ab ng" data-r="×">× ダメ</button>'
+    + (kind === 'pv' ? '<button type="button" class="ab sub" data-act="later" title="予習を明日に延期">⏩ 明日へ</button>' : '')
+    + '<button type="button" class="ab sub" data-act="edit" title="詳細を編集">✎</button>'
+    + '</div></div>';
+}
+
+function renderReview(){
+  var data = load(), td = today();
+  var due = data.filter(function(l){ return isDue(l, td); }).sort(function(a, b){
+    if(!!b.important !== !!a.important) return b.important ? 1 : -1; /* ⭐重要を先頭に */
+    return a.nextReviewDate.localeCompare(b.nextReviewDate);
+  });
+  var pre = data.filter(function(l){ return l.previewDate && l.previewDate <= td && !isDue(l, td); })
+    .sort(function(a, b){ return a.previewDate.localeCompare(b.previewDate); });
+  var upcoming = data.filter(function(l){ return l.nextReviewDate && l.nextReviewDate > td; }).length;
+  var grad = data.filter(function(l){ return (l.intervalLevel || 0) >= SRS_DAYS.length; }).length;
+
+  $('rvSum').innerHTML = '復習 <b>' + due.length + '</b> 件 ／ 予習 <b>' + pre.length + '</b> 件 ／ 今後の復習予定 ' + upcoming + ' 件 ／ 🎓 定着 ' + grad + ' 件'
+    + '<br><span style="font-size:.78rem;">○できた→間隔が伸びる（1→3→7→14→30→90日→定着） ／ △→同じ間隔 ／ ×→明日もう一度</span>';
+  $('rvList').innerHTML = due.length ? due.map(function(l){ return rvCard(l, 'rv'); }).join('')
+    : '<div class="empty"><div class="big">🐻</div>今日の復習はすべて完了だクマ！<br>新しい問題を解いて記録しよう。</div>';
+  $('pvList').innerHTML = pre.length ? pre.map(function(l){ return rvCard(l, 'pv'); }).join('')
+    : '<div class="empty">予習予定の問題はありません。</div>';
+
+  var total = due.length + pre.length;
+  var bd = $('rvBadge');
+  bd.textContent = total; bd.style.display = total ? 'block' : 'none';
+  $('rvAlertN').textContent = total;
+  $('rvAlert').style.display = total ? 'block' : 'none';
+}
+
+function answerCard(id, kind, r){
+  var data = load(), i = data.findIndex(function(l){ return l.id === id; });
+  if(i < 0) return;
+  var l = data[i], td = today(), msg;
+  if(kind === 'rv'){
+    var nx = nextReview(l.intervalLevel || 0, r);
+    l.intervalLevel  = nx.lv;
+    l.nextReviewDate = nx.date;
+    l.reviewCount    = (l.reviewCount || 0) + 1;
+    l.lastReviewDate = td;
+    msg = nx.grad ? '🎓 卒業！長期記憶に定着しました' : '次の復習は ' + jpDate(nx.date) + '（' + relLabel(nx.date) + '）';
+  } else {
+    var a = autoReview(r, l.important);
+    l.intervalLevel  = a.lv;
+    l.nextReviewDate = a.date;
+    msg = a.date ? '予習完了 → 次の復習 ' + jpDate(a.date) : '予習完了！';
+  }
+  if(l.previewDate && l.previewDate <= td) l.previewDate = null; /* 期限が来ていた予習は完了扱い */
+  l.result = r;
+  l.updatedDate = td;
+  store(data);
+  renderAll();
+  toast('【' + r + '】 ' + esc(setLabel(l.year, l.period) + ' ' + l.qNum) + ' ／ ' + msg);
+}
+
+function onReviewClick(e){
+  var card = e.target.closest('.rvc'); if(!card) return;
+  var b = e.target.closest('button'); if(!b) return;
+  var id = card.dataset.id, kind = card.dataset.kind;
+  if(b.dataset.r){ answerCard(id, kind, b.dataset.r); return; }
+  if(b.dataset.act === 'edit'){ openSheet({id:id}); return; }
+  if(b.dataset.act === 'later'){
+    var data = load(), i = data.findIndex(function(l){ return l.id === id; });
+    if(i >= 0){ data[i].previewDate = addDays(1); store(data); renderAll(); toast('⏩ 予習を明日に延期しました'); }
+  }
+}
+$('rvList').addEventListener('click', onReviewClick);
+$('pvList').addEventListener('click', onReviewClick);
+
+/* ============================================================
+   履歴・検索
+============================================================ */
+var H_FILTERS = [ /* 履歴の絞り込みチップ */
+  {k:'all', t:'すべて'}, {k:'ng', t:'× のみ'}, {k:'hf', t:'△ のみ'}, {k:'ok', t:'○ のみ'},
+  {k:'imp', t:'⭐ 重要'}, {k:'due', t:'🔥 復習待ち'}, {k:'pdover', t:'⚠ 予習期限切れ'}, {k:'sub', t:'選択中の科目'}
+];
+var hFilter = 'all'; /* 選択中の絞り込み */
+var hSub = null;     /* 進捗タブから指定された科目 */
+
+function renderHist(){
+  var data = load(), td = today();
+  $('hChips').innerHTML = H_FILTERS.map(function(f){
+    var t = (f.k === 'sub' && hSub) ? '科目: ' + subShort(hSub) : f.t;
+    if(f.k === 'sub' && !hSub) return '';
+    return '<button type="button" class="chip sm' + (hFilter === f.k ? ' on' : '') + '" data-f="' + f.k + '">' + esc(t) + '</button>';
+  }).join('');
+
+  var toks = normText($('hq').value).split(/\s+/).filter(function(t){ return t; }); /* 検索語 */
+  var list = data.filter(function(l){
+    if(hFilter === 'ng' && l.result !== '×') return false;
+    if(hFilter === 'hf' && l.result !== '△') return false;
+    if(hFilter === 'ok' && l.result !== '○') return false;
+    if(hFilter === 'imp' && !l.important) return false;
+    if(hFilter === 'due' && !isDue(l, td)) return false;
+    if(hFilter === 'pdover' && !(l.previewDate && l.previewDate < td)) return false;
+    if(hFilter === 'sub' && hSub && l.subject !== hSub) return false;
+    if(toks.length){
+      var hay = normText([l.subject, subShort(l.subject), l.year, yearKanji(l.year), l.period, l.qNum, l.memo, l.result].join(' '));
+      for(var i = 0; i < toks.length; i++){
+        var t = toks[i];
+        /* 数字だけの語は問題番号として完全一致（「12」→問12） */
+        if(/^[0-9]+$/.test(t)){ if(normQ(l.qNum) !== '問' + parseInt(t, 10)) return false; }
+        else if(hay.indexOf(t) < 0) return false;
+      }
+    }
+    return true;
+  }).sort(function(a, b){
+    return (b.updatedDate || b.recordDate).localeCompare(a.updatedDate || a.recordDate) || String(b.id).localeCompare(String(a.id));
+  });
+
+  $('hCount').textContent = list.length + ' 件表示 ／ 全 ' + data.length + ' 件';
+  $('hList').innerHTML = list.length ? list.map(function(l){
+    var pdOver = l.previewDate && l.previewDate < td;
+    var pd = l.previewDate
+      ? (pdOver ? '<span class="w">⚠ 予習 ' + jpDate(l.previewDate) + '（' + relLabel(l.previewDate) + '）</span>'
+                : (l.previewDate === td ? '<span class="t">📖 予習 今日</span>' : '予習 ' + jpDate(l.previewDate)))
+      : '';
+    var rd = l.nextReviewDate
+      ? (isDue(l, td) ? '<span class="t">🔥 復習 ' + relLabel(l.nextReviewDate) + '</span>' : '復習 ' + jpDate(l.nextReviewDate))
+      : ((l.intervalLevel || 0) >= SRS_DAYS.length ? '🎓 定着' : '復習なし');
+    return '<div class="hrow' + (pdOver ? ' over' : '') + '" data-id="' + l.id + '">'
+      + '<span class="rb ' + rc(l.result) + '">' + esc(l.result) + '</span>'
+      + '<div class="hmain">'
+      + '<div class="ht"><b>' + esc(setLabel(l.year, l.period)) + ' ' + esc(l.qNum) + '</b>' + (l.important ? ' ⭐' : '') + '<span class="hs">' + esc(subShort(l.subject)) + '</span></div>'
+      + '<div class="hd">' + [pd, rd, '記録 ' + esc(l.recordDate)].filter(function(x){ return x; }).join(' ｜ ') + '</div>'
+      + (l.memo ? '<div class="hm">📝 ' + esc(l.memo) + '</div>' : '')
+      + '</div><span class="hgo">✎</span></div>';
+  }).join('') : '<div class="empty">該当する記録がありません。</div>';
+}
+$('hq').addEventListener('input', renderHist);
+$('hChips').addEventListener('click', function(e){
+  var b = e.target.closest('[data-f]'); if(!b) return;
+  hFilter = b.dataset.f;
+  if(hFilter !== 'sub') hSub = null;
+  renderHist();
+});
+$('hList').addEventListener('click', function(e){
+  var r = e.target.closest('.hrow'); if(r) openSheet({id:r.dataset.id});
+});
+
+/* CSV出力 */
+$('bCSV').addEventListener('click', function(){
+  var data = load();
+  if(!data.length){ toast('データがありません'); return; }
+  var q = function(s){ return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; };
+  var rows = [['ID','科目','年度','区分','問題番号','結果','重要','メモ','記録日','予習予定日','次回復習日','定着レベル'].join(',')];
+  data.forEach(function(l){
+    rows.push([l.id, q(l.subject), l.year, l.period, q(l.qNum), l.result, l.important ? '⭐' : '', q(l.memo),
+      l.recordDate, l.previewDate || '', l.nextReviewDate || '', l.intervalLevel || 0].join(','));
+  });
+  var blob = new Blob(['\uFEFF' + rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = 'denkoji1_log_' + today() + '.csv'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ============================================================
+   進捗
+============================================================ */
+function renderDash(){
+  var data = load(), td = today();
+  var ok = data.filter(function(l){ return l.result === '○'; }).length;
+  var due = data.filter(function(l){ return isDue(l, td); }).length;
+  var grad = data.filter(function(l){ return (l.intervalLevel || 0) >= SRS_DAYS.length; }).length;
+  var rate = data.length ? Math.round(ok / data.length * 100) : 0;
+  $('stats').innerHTML =
+      '<div class="st"><b>' + data.length + '</b><span>総記録数</span></div>'
+    + '<div class="st"><b>' + rate + '%</b><span>正解率（○）</span></div>'
+    + '<div class="st"><b>' + due + '</b><span>復習待ち</span></div>'
+    + '<div class="st"><b>' + grad + '</b><span>🎓 定着</span></div>';
+
+  $('dash').innerHTML = SUBS.map(function(s){
+    var logs = data.filter(function(l){ return l.subject === s.f; });
+    var t = logs.length;
+    var c = {'○':0, '△':0, '×':0};
+    logs.forEach(function(l){ c[l.result] = (c[l.result] || 0) + 1; });
+    var p = function(n){ return t ? (n / t * 100) : 0; };
+    return '<div class="sr" data-sub="' + esc(s.f) + '" title="' + esc(s.f) + '">'
+      + '<div class="sr-h"><span>' + esc(s.s) + '</span><span>○' + c['○'] + ' △' + c['△'] + ' ×' + c['×'] + '　<em>' + (t ? Math.round(p(c['○'])) : 0) + '%</em></span></div>'
+      + '<div class="bar"><i style="width:' + p(c['○']) + '%;background:var(--ok);"></i><i style="width:' + p(c['△']) + '%;background:var(--hf);"></i><i style="width:' + p(c['×']) + '%;background:var(--rd);"></i></div>'
+      + '</div>';
+  }).join('');
+}
+$('dash').addEventListener('click', function(e){
+  var r = e.target.closest('[data-sub]'); if(!r) return;
+  hSub = r.dataset.sub; hFilter = 'sub'; $('hq').value = '';
+  showTab(2);
+});
+
+/* ============================================================
+   タブ・全体描画
+============================================================ */
+function showTab(n){
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.toggle('on', +t.dataset.tab === n); });
+  for(var i = 0; i < 4; i++) $('tc' + i).classList.toggle('on', i === n);
+  renderAll();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click', function(){ showTab(+t.dataset.tab); });
+});
+function renderAll(){ renderQuick(); renderReview(); renderHist(); renderDash(); }
+
+/* ============================================================
+   キーボード操作（シート表示中：1/2/3で結果、Escで閉じる）
+============================================================ */
+document.addEventListener('keydown', function(e){
+  if($('calOv').classList.contains('on')){ if(e.key === 'Escape') closeCal(); return; }
+  if(!sh) return;
+  if(e.key === 'Escape'){ closeSheet(); return; }
+  var tag = (e.target.tagName || '').toLowerCase();
+  if(tag === 'textarea' || tag === 'input') return; /* メモ入力中は無視 */
+  if(e.key === '1') saveSheet('○');
+  if(e.key === '2') saveSheet('△');
+  if(e.key === '3') saveSheet('×');
+});
+
+/* 初期描画 */
+renderAll();
+</script>
+</body>
+</html>

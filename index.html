@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第一種電気工事士 Bear Sync</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="header">
+    <div class="bear-logo">
+      <!-- クマのSVGアイコン（ブルーメタバース風） -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="#001233" stroke="#00d4ff" stroke-width="3" />
+        <circle cx="30" cy="30" r="15" fill="#001233" stroke="#00d4ff" stroke-width="2" />
+        <circle cx="70" cy="30" r="15" fill="#001233" stroke="#00d4ff" stroke-width="2" />
+        <circle cx="35" cy="45" r="5" fill="#00ffcc" />
+        <circle cx="65" cy="45" r="5" fill="#00ffcc" />
+        <ellipse cx="50" cy="65" rx="15" ry="10" fill="#00d4ff" opacity="0.2" />
+        <path d="M 45 60 Q 50 65 55 60" stroke="#00ffcc" stroke-width="2" fill="none" />
+      </svg>
+    </div>
+    <h1 class="site-title">第一種電気工事士 Bear Sync</h1>
+  </header>
+
+  <p class="subtitle">〜 メタバース空間で一種を制覇！ 〜</p>
+
+  <main class="main-container">
+    <div class="card-container">
+      <a href="fukusen.html" class="card" style="border-color: #e60023; background: linear-gradient(180deg, #2a0008, #0a090b); box-shadow: 0 0 18px rgba(230,0,35,0.45);">
+        <h3 style="color: #ff1f45;">⚡ 複線図 METAL 道場</h3>
+        <p>実技 候補問題 No.1〜10 を5ステップ・色分けで完全攻略！</p>
+        <span class="badge" style="background: #e60023; color: #fff;">実技試験 合格必勝</span>
+      </a>
+      <a href="training_log.html" class="card">
+        <h3>📋 学習記録</h3>
+        <p>過去問の解答記録・予習日・復習日の管理</p>
+      </a>
+      <a href="flashcard.html" class="card">
+        <h3>BEAR RECALL</h3>
+        <p>忘却曲線をハックする復習</p>
+        <span class="badge" id="due-badge">復習: 0件</span>
+      </a>
+      <a href="study_timer.html" class="card">
+        <h3>⏱️ 勉強タイマー</h3>
+        <p>ポモドーロで集中力UP</p>
+      </a>
+      <div class="card disabled">
+        <h3>科目別クイズ</h3>
+        <p>準備中</p>
+      </div>
+      <div class="card disabled">
+        <h3>必殺！語呂合わせ</h3>
+        <p>準備中</p>
+      </div>
+    </div>
+
+    <h2 class="section-title">BEAR SYNC DASHBOARD</h2>
+    <div class="dashboard">
+      
+      <div class="warning-container" id="review-warning">
+        ⚠️ <strong>復習待ちのカードが溜まっています！</strong><br>
+        記憶が消える前に BEAR RECALL を実行してください。
+      </div>
+
+      <div class="death-meter-container">
+        <div class="death-meter-label">
+          <span>BEAR METER (全体進捗)</span>
+          <span id="total-progress-text">0%</span>
+        </div>
+        <div class="death-meter-bar">
+          <div class="death-meter-fill" id="total-progress-fill"></div>
+        </div>
+      </div>
+
+      <p style="color: var(--text-dim); margin-bottom: 20px;">今日の学習: <span id="today-learned" style="color: var(--accent-cyan); font-weight: bold;">0</span> 問</p>
+
+      <h3>科目別進捗</h3>
+      <div class="subject-progress" id="subject-progress-container">
+        <!-- JSで生成される科目バー -->
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    &copy; 2026 第一種電気工事士 Bear Sync. Powered by Metaverse Bear.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
